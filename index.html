@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina Electric Air | แดชบอร์ดผู้ดูแลระบบแอดมิน (Lumina 06)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --blue:#0879d9; --deep:#0755a5; --sky:#49c7f5; --ice:#eefaff; --white:#fff;
+  --text:#12385b; --muted:#6d8aa3; --line:#d7ebf7;
+  --shadow:0 12px 30px rgba(0,86,160,.12); --radius:16px;
+  --green:#0a9b63; --red:#d32f2f; --orange:#c47a00;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Noto Sans Thai',sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,#dff7ff 0%,#f7fdff 55%,#e7f8ff 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* Sidebar Navigation — blue bar / active menu white */
+.sidebar{
+  width:260px;
+  background:linear-gradient(180deg,#0567c8,#064b9c);
+  color:white;
+  padding:24px 16px;
+  position:fixed;
+  left:0;top:0;bottom:0;
+  z-index:10;
+  box-shadow:8px 0 25px rgba(0,85,165,0.15);
+  overflow-y:auto;
+}
+.brand{padding:6px 8px 20px;border-bottom:1px solid rgba(255,255,255,0.2);margin-bottom:16px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.brand small{display:block;font-size:12px;opacity:.85;margin-top:2px}
+.nav{display:grid;gap:6px}
+.nav button{
+  background:transparent;
+  color:#e9f8ff;
+  text-align:left;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:13.5px;
+  transition:.2s;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+}
+.nav button:hover{
+  background:rgba(255,255,255,0.08);
+  box-shadow:none;
+}
+.nav button.active{
+  background:#fff;
+  color:#0755a5;
+  box-shadow:0 4px 12px rgba(0,40,100,0.12);
+}
+.nav button.active::before{
+  content:"";
+  position:absolute;
+  left:-16px;
+  top:7px;
+  bottom:7px;
+  width:3px;
+  border-radius:0 3px 3px 0;
+  background:#fff;
+}
+.side-bottom{margin-top:24px;border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;font-size:12px;opacity:.85;line-height:1.6}
+.side-bottom a{color:#fff;text-decoration:underline}
+
+/* Main Area */
+.main{margin-left:260px;width:calc(100% - 260px);padding:24px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.greeting h1{margin:0;font-size:22px;font-weight:700}
+.greeting p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.top-status-badge{
+  padding:10px 18px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#fff;
+  transition: background-color 0.3s;
+}
+.top-status-badge.off{background:var(--red);}
+.top-status-badge.on{background:var(--green);}
+.status-dot{width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block}
+
+.page{display:none}
+.page.active{display:block}
+.grid{display:grid;gap:16px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+
+.card{
+  background:rgba(255,255,255,0.95);
+  border:1px solid #fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+  position:relative;
+}
+.card h2,.card h3{margin:0 0 12px;font-size:18px}
+.muted{color:var(--muted)}
+.btn{padding:9px 14px;border-radius:10px;font-weight:600;font-size:13px;background:var(--blue);color:white;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.secondary{background:#e9f7ff;color:#0768b9}
+.btn.danger{background:#ffebee;color:var(--red)}
+.btn.success{background:#e8faf2;color:var(--green)}
+.btn.outline{background:transparent;border:1px solid var(--line);color:var(--text)}
+
+.stat{display:flex;flex-direction:column;justify-content:center}
+.stat span{font-size:12px;color:var(--muted);margin-bottom:4px}
+.stat strong{font-size:22px;color:var(--text)}
+
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}
+.section-title h2{margin:0;font-size:18px;font-weight:700}
+
+.job-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fbfeff;margin-bottom:12px}
+.job-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.job-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+
+.tag{font-size:11px;background:#eaf7ff;color:#0675c8;padding:4px 10px;border-radius:20px;font-weight:700;display:inline-block}
+.tag.green{background:#e8faf2;color:var(--green)}
+.tag.orange{background:#fff6e8;color:var(--orange)}
+.tag.red{background:#ffebee;color:var(--red)}
+.tag.gray{background:#f0f4f8;color:var(--muted)}
+
+.list{display:grid;gap:10px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;gap:10px}
+
+/* Clock Header Banner */
+.clock-banner{display:flex;gap:12px;margin-bottom:16px}
+.clock-btn{flex:1;padding:16px;border-radius:14px;font-size:15px;font-weight:700;color:#fff;text-align:center;transition:.2s;border:0;cursor:pointer}
+.clock-btn.in{background:var(--green)}
+.clock-btn.out{background:var(--red)}
+.clock-btn:hover{filter:brightness(1.05)}
+
+/* Team Structure */
+.team-section-header{font-size:15px;font-weight:700;color:var(--text);margin:16px 0 12px;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.team-card{border:1px solid var(--line);border-radius:16px;padding:20px;background:#fff;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.03)}
+.team-avatar{width:56px;height:56px;border-radius:50%;background:#eaf7ff;color:var(--blue);display:grid;place-items:center;font-size:18px;font-weight:800;margin:0 auto 12px}
+.team-card-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;}
+
+/* Interactive Chat System */
+.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:16px;height:560px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+.chat-users{border-right:1px solid var(--line);overflow-y:auto;background:#fcfdfe}
+.user-item{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:.2s}
+.user-item:hover,.user-item.active{background:#eefaff}
+.user-item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.chat-main{display:flex;flex-direction:column;height:100%;padding:16px;background:#fff}
+.chat-box{border:1px solid var(--line);border-radius:14px;flex:1;background:#fafcfe;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:410px;}
+.chat-msg{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;word-break:break-word;}
+.chat-msg.other{background:#eefaff;color:var(--text);align-self:flex-start;border:1px solid var(--line)}
+.chat-msg.me{background:var(--blue);color:#fff;align-self:flex-end}
+.chat-input{display:flex;gap:8px}
+.chat-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 14px;outline:none}
+
+/* Filter Cards */
+.filter-card{background:#f8fdff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:20px}
+.filter-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:12px;margin-top:12px}
+.filter-group{display:flex;flex-direction:column;gap:6px}
+.filter-group label{font-size:12px;font-weight:700;color:var(--deep)}
+.filter-group select, .filter-group input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;outline:none}
+
+/* Horizontal Scroll Tabs */
+.cust-scroll-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;scroll-behavior:smooth;}
+.cust-scroll-tabs::-webkit-scrollbar{height:6px}
+.cust-scroll-tabs::-webkit-scrollbar-thumb{background:var(--sky);border-radius:10px}
+.cust-tab-btn{padding:8px 16px;border-radius:20px;background:#fff;border:1px solid var(--line);white-space:nowrap;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:.2s}
+.cust-tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Filter Pills */
+.filter-pills{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.pill-btn{padding:8px 16px;border-radius:20px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--text);cursor:pointer;}
+.pill-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* Product Grid */
+.product-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px}
+.product-card{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 15px rgba(0,85,165,0.05)}
+.product-badge-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.product-brand{font-weight:800;font-size:14px;color:var(--deep)}
+.product-model{font-weight:700;font-size:18px;color:var(--text);margin-bottom:6px}
+.product-specs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f4fbff;padding:10px;border-radius:10px;font-size:12px;margin:10px 0;border:1px solid #e1f3ff}
+.product-price-bar{display:flex;justify-content:space-between;align-items:flex-end;padding-top:10px;border-top:1px dashed var(--line)}
+.product-price{font-size:20px;font-weight:800;color:var(--blue)}
+
+/* House Section */
+.house-section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
+.house-section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+
+/* Tables */
+.table-responsive{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:10px;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+th,td{padding:12px 14px;text-align:left;font-size:13px;border-bottom:1px solid var(--line)}
+th{background-color:#eaf7ff;color:var(--deep);font-weight:700}
+tr:last-child td{border-bottom:none}
+
+/* Modal & Toast */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,30,60,0.5);z-index:30;place-items:center;padding:16px}
+.modal.show{display:grid}
+.modal-box{background:white;border-radius:18px;padding:24px;max-width:600px;width:100%;max-height:90vh;overflow:auto;position:relative}
+.close{position:absolute;right:16px;top:16px;background:#f0f4f8;border-radius:50%;width:32px;height:32px;font-size:16px;color:var(--muted);border:0;cursor:pointer}
+.toast{position:fixed;right:24px;bottom:24px;background:#063f82;color:#fff;padding:14px 20px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:40;font-size:13px}
+
+@media(max-width:1100px){
+  .product-grid,.team-grid{grid-template-columns:repeat(2, 1fr)}
+}
+@media(max-width:900px){
+  .sidebar{width:70px;padding:16px 8px}
+  .logo,.brand small,.nav span,.side-bottom{display:none}
+  .main{margin-left:70px;width:calc(100% - 70px);padding:16px}
+  .grid-4,.grid-3,.grid-2,.team-grid,.chat-layout,.product-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Admin login gate (did not exist before — 004 had no authentication at all,
+     which the project brief requires). Reuses the dashboard's own .card/.btn
+     styling rather than introducing new design language. -->
+<div id="adminLoginScreen" style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg, #f4f7fb);">
+  <div class="card" style="max-width:360px; width:100%;">
+    <h2 style="margin-bottom:4px;">Lumina Admin</h2>
+    <p class="muted" style="margin-bottom:16px;">เข้าสู่ระบบเพื่อจัดการข้อมูลร้าน</p>
+    <label class="form-field">อีเมล<input id="adminLoginEmail" type="email" placeholder="กรอกอีเมลแอดมิน"></label>
+    <label class="form-field" style="margin-top:8px;">รหัสผ่าน<input id="adminLoginPass" type="password" placeholder="กรอกรหัสผ่าน"></label>
+    <p id="adminLoginError" style="color:var(--red); display:none; margin-top:8px; font-size:13px;">อีเมลหรือรหัสผ่านไม่ถูกต้อง หรือบัญชีนี้ไม่มีสิทธิ์แอดมิน</p>
+    <button class="btn" style="width:100%; margin-top:12px;" onclick="adminLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none;">
+  <!-- Sidebar Navigation (ไม่มีคำขอใช้แต้มโบนัส) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">LUMINA</div>
+      <small>ระบบปฏิบัติการแอดมิน (v05)</small>
+    </div>
+    <nav class="nav">
+      <button class="active" data-page="home"><span>หน้าหลัก</span></button>
+      <button data-page="products"><span>สินค้า & ราคา</span></button>
+      <button data-page="bookings"><span>รายการการจอง</span></button>
+      <button data-page="pending"><span>งานที่รอแจกจ่าย</span></button>
+      <button data-page="assigned"><span>งานวันนี้ที่แจกจ่ายแล้ว</span></button>
+      <button data-page="error-codes"><span>Error Code / ซ่อม</span></button>
+      <button data-page="customers"><span>ข้อมูลลูกค้า</span></button>
+      <button data-page="customer-assets"><span>บ้าน & เครื่องของลูกค้า</span></button>
+      <button data-page="customer-chat"><span>แชทลูกค้า</span></button>
+      <button data-page="teams"><span>จัดการทีมช่าง</span></button>
+      <button data-page="technician-chat"><span>แชทกับช่าง</span></button>
+      <button data-page="settings"><span>ตั้งค่าร้าน</span></button>
+      <button data-page="profile"><span>โปรไฟล์แอดมิน</span></button>
+    </nav>
+    <div class="side-bottom">
+      <b>สำนักงาน Lumina Electric Air</b><br>
+      📞 โทร: <a href="tel:02-000-0000">02-000-0000</a><br>
+      💬 LINE OA: <a href="https://line.me/R/ti/p/@420rkehz" target="_blank">@420rkehz</a><br>
+      แอดมินประจำการ: <span id="sidebarAdminName">สมศรี</span>
+      <button class="btn secondary" style="width:100%; margin-top:10px;" onclick="adminLogout()">ออกจากระบบ</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <header class="topbar">
+      <div class="greeting">
+        <h1>สวัสดี แอดมินสมศรี (Admin Officer)</h1>
+        <p id="currentDate"></p>
+      </div>
+      <div class="top-status-badge off" id="topStatusBadge">
+        <span class="status-dot"></span>
+        <span id="topStatusText">นอกเวลาปฏิบัติงาน</span>
+      </div>
+    </header>
+
+    <!-- PAGE 1: หน้าหลัก -->
+    <section class="page active" id="home">
+      <div class="section-title">
+        <h2>ภาพรวมการปฏิบัติงานวันนี้</h2>
+      </div>
+      <div class="grid grid-4">
+        <div class="card stat"><span>งานรอแจกจ่าย</span><strong id="homePendingCount">5 รายการ</strong></div>
+        <div class="card stat"><span>งานที่แจกจ่ายแล้ว</span><strong>3 รายการ</strong></div>
+        <div class="card stat"><span>งานที่กำลังดำเนินการ</span><strong>3 รายการ</strong></div>
+        <div class="card stat"><span>งานเสร็จสิ้นวันนี้</span><strong>2 รายการ</strong></div>
+      </div>
+
+      <div class="card" style="margin-top:16px;border-left:4px solid var(--red);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <b>การติดตาม Error Code ขัดข้องจากอุปกรณ์ (IoT/Blynk)</b>
+            <p class="muted" style="margin:4px 0 0;font-size:13px;">
+              พบ Error Code 2 รายการในระบบ (คุณวิชัย: U4, คุณประเสริฐ: E1)
+            </p>
+          </div>
+          <button class="btn danger" onclick="navigateToPage('error-codes')">ดู Error Code ทั้งหมด</button>
+        </div>
+      </div>
+
+      <!-- โปรโมชั่นหน้าหลัก -->
+      <div class="section-title">
+        <h2>โปรโมชั่นปัจจุบันของ Lumina Electric Air</h2>
+        <button class="btn" onclick="addPromo()">+ เพิ่มโปรโมชั่น</button>
+      </div>
+      <div class="card">
+        <div id="promoContainer" class="list">
+          <div class="row">
+            <div>
+              <b style="color:var(--deep);font-size:15px;">1. โปรโมชั่นเครื่องปรับอากาศส่วนลดพิเศษ</b>
+              <div style="font-size:13px;margin-top:4px;line-height:1.5;">
+                ส่วนลดพิเศษสำหรับเครื่องปรับอากาศรุ่นที่ร่วมรายการ พร้อมสิทธิ์บริการติดตั้งตามเงื่อนไขของร้าน<br>
+                <span class="tag green" style="margin-top:4px;">สิทธิพิเศษสำหรับลูกค้าใหม่</span> เมื่อซื้อเครื่องปรับอากาศตั้งแต่ 3 เครื่องขึ้นไป รับส่วนลดทันที 5,000 บาท <i>(สามารถใช้ร่วมกับคูปองและบัตรสะสมแต้มจาก LINE ได้)</i>
+              </div>
+            </div>
+            <div style="min-width:130px;text-align:right;">
+              <button class="btn secondary" onclick="editPromo(this)">แก้ไข</button>
+              <button class="btn danger" onclick="deletePromo(this)">ลบ</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <b style="color:var(--deep);font-size:15px;">2. โปรโมชั่นล้างแอร์ราคาพิเศษสำหรับลูกค้า Lumina</b>
+              <div style="font-size:13px;margin-top:4px;line-height:1.5;">
+                บริการล้างเครื่องปรับอากาศในราคาพิเศษสำหรับลูกค้า Lumina<br>
+                <b>• ลูกค้าเก่า รับส่วนลด 5% &nbsp;|&nbsp; • ลูกค้าใหม่ รับส่วนลด 20%</b><br>
+                <i>(สามารถใช้ร่วมกับคูปองและบัตรสะสมแต้มจาก LINE ตามเงื่อนไขและระยะเวลาที่กำหนด)</i>
+              </div>
+            </div>
+            <div style="min-width:130px;text-align:right;">
+              <button class="btn secondary" onclick="editPromo(this)">แก้ไข</button>
+              <button class="btn danger" onclick="deletePromo(this)">ลบ</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <b style="color:var(--deep);font-size:15px;">3. ส่วนลดพิเศษสำหรับแลกเครื่องปรับอากาศเครื่องเก่า</b>
+              <div style="font-size:13px;margin-top:4px;line-height:1.5;">
+                ลูกค้าสามารถนำเครื่องปรับอากาศเครื่องเก่ามาประเมิน เพื่อรับส่วนลดสำหรับการซื้อเครื่องใหม่<br>
+                ส่วนลดขึ้นอยู่กับ: <b>รุ่น, สภาพเครื่อง, อายุการใช้งาน และเงื่อนไขของทางร้าน</b>
+              </div>
+            </div>
+            <div style="min-width:130px;text-align:right;">
+              <button class="btn secondary" onclick="editPromo(this)">แก้ไข</button>
+              <button class="btn danger" onclick="deletePromo(this)">ลบ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: สินค้า & ราคา -->
+    <section class="page" id="products">
+      <div class="section-title">
+        <h2>ฐานข้อมูลสินค้า & ราคาเครื่องปรับอากาศ (Catalog & Stock)</h2><button class="btn" onclick="openCreateProductModal()">+ เพิ่มสินค้าใหม่</button>
+      </div>
+
+      <div class="filter-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <b style="font-size:15px;color:var(--deep);">ระบบค้นหาและกรองสินค้า (Filters)</b>
+          <button class="btn outline" style="font-size:12px;" onclick="clearProductFilters()">ล้างตัวกรอง</button>
+        </div>
+        
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px;">ค้นหาสินค้า</label>
+          <input id="productSearch" type="search" placeholder="พิมพ์ค้นหาแบรนด์ รุ่น หรือประเภทสินค้า..." oninput="applyProductFilters()" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;outline:none;box-sizing:border-box;">
+        </div>
+        <div class="filter-row">
+          <!-- 1. รูปแบบแอร์ (Category) -->
+          <div class="filter-group">
+            <label>รูปแบบแอร์ (Category)</label>
+            <select id="filterCategory" onchange="applyProductFilters()">
+              <option value="ALL">ทุกรูปแบบแอร์</option>
+              <option value="ติดผนัง">แอร์ติดผนัง (Wall Mounted)</option>
+              <option value="ตั้งแขวน">แอร์ตั้งแขวน (Ceiling/Floor)</option>
+              <option value="สี่ทิศทาง">แอร์ฝังฝ้า 4 ทิศทาง (Cassette)</option>
+            </select>
+          </div>
+
+          <!-- 2. สถานะโปรโมชั่น (Promo) -->
+          <div class="filter-group">
+            <label>สถานะโปรโมชั่น (Promo)</label>
+            <select id="filterPromo" onchange="applyProductFilters()">
+              <option value="ALL">โปรโมชั่นทั้งหมด</option>
+              <option value="HAS_PROMO">เฉพาะสินค้ามีโปรโมชั่น</option>
+              <option value="NO_PROMO">สินค้าไม่มีโปรโมชั่น</option>
+            </select>
+          </div>
+
+          <!-- 3. ระบบ (Type) -->
+          <div class="filter-group">
+            <label>ระบบ (Type)</label>
+            <select id="filterType" onchange="applyProductFilters()">
+              <option value="ALL">ประเภททั้งหมด</option>
+              <option value="Inverter">Inverter</option>
+              <option value="Standard">Standard</option>
+            </select>
+          </div>
+
+          <!-- 4. BTU -->
+          <div class="filter-group">
+            <label>ขนาด BTU</label>
+            <select id="filterBtu" onchange="applyProductFilters()">
+              <option value="ALL">ทุกขนาด BTU</option>
+              <option value="12000">12,000 BTU</option>
+              <option value="18000">18,000 BTU</option>
+              <option value="24000">24,000 BTU</option>
+            </select>
+          </div>
+
+          <!-- 5. ช่วงราคา (Price) -->
+          <div class="filter-group">
+            <label>ช่วงราคา (Price)</label>
+            <select id="filterPrice" onchange="applyProductFilters()">
+              <option value="ALL">ราคาทั้งหมด</option>
+              <option value="20000">ไม่เกิน 20,000 บาท</option>
+              <option value="25000">ไม่เกิน 25,000 บาท</option>
+              <option value="30000">ไม่เกิน 30,000 บาท</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="productGridContainer" class="product-grid"></div>
+    </section>
+
+    <!-- PAGE 3: รายการการจอง -->
+    <section class="page" id="bookings">
+      <div class="section-title">
+        <h2>รายการการจองจากทุกช่องทาง (Bookings)</h2>
+        <button class="btn" onclick="openCreateBookingModal()">+ สร้าง Booking ใหม่ (LINE / Walk-in / Phone)</button>
+      </div>
+      <div class="card">
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>Booking ID</th><th>ลูกค้า</th><th>ประเภทบริการ</th><th>วันที่ - เวลา</th><th>ที่อยู่จัดส่ง/บริการ</th><th>เบอร์โทร</th><th>สถานะคิวงาน</th></tr></thead>
+            <tbody id="bookingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: งานที่รอแจกจ่าย -->
+    <section class="page" id="pending">
+      <div class="section-title"><h2>งานที่รอแจกจ่ายให้ทีมช่าง</h2></div>
+      <div class="list" id="pendingJobList"></div>
+    </section>
+
+    <!-- PAGE 5: งานที่แจกจ่ายแล้ว -->
+    <section class="page" id="assigned">
+      <div class="section-title"><h2>ติดตามสถานะงานที่แจกจ่ายแล้ว</h2></div>
+      <div id="assignedJobList"></div>
+    </section>
+
+    <!-- PAGE 6: ERROR CODE / ซ่อม -->
+    <section class="page" id="error-codes">
+      <div class="section-title"><h2>การจัดการ Error Code จากอุปกรณ์ (เชื่อมโยงฐานข้อมูลลูกค้า)</h2></div>
+      <div class="card"><div class="table-responsive">
+        <table>
+          <thead><tr><th>Error Code ID</th><th>ลูกค้า / อุปกรณ์</th><th>รหัส Error</th><th>รายละเอียดอาการ</th><th>สถานะคิว</th><th>การจัดการ Admin</th></tr></thead>
+          <tbody id="errorCodeTableBody"></tbody>
+        </table>
+      </div></div>
+    </section>
+
+    <!-- PAGE 7: ฐานข้อมูลลูกค้า -->
+    <section class="page" id="customers">
+      <div class="section-title">
+        <h2>ฐานข้อมูลลูกค้าทั้งหมด</h2>
+        <button class="btn" onclick="openCreateCustomerModal()">+ เพิ่มลูกค้า / เพิ่มงานจองคิว</button>
+      </div>
+      <div class="filter-pills">
+        <button class="pill-btn active" onclick="filterCustomerTable('ALL', this)">ลูกค้าทั้งหมด</button>
+        <button class="pill-btn" onclick="filterCustomerTable('HAS_QUEUE', this)">มีคิวงาน / จองคิวอยู่</button>
+        <button class="pill-btn" onclick="filterCustomerTable('NORMAL', this)">เคยใช้บริการแล้ว</button>
+      </div>
+      <div class="card"><div class="table-responsive">
+        <table>
+          <thead><tr><th>ชื่อลูกค้า</th><th>เบอร์โทรศัพท์</th><th>ที่อยู่</th><th>แอร์ในดูแล</th><th>บริการล่าสุด</th><th>สถานะคิวปัจจุบัน</th><th>การจัดการ</th></tr></thead>
+          <tbody id="customerTableBody"></tbody>
+        </table>
+      </div></div>
+    </section>
+
+    <!-- PAGE 8: บ้าน & เครื่องของลูกค้า -->
+    <section class="page" id="customer-assets">
+      <div class="section-title"><h2>ข้อมูลเครื่องปรับอากาศและบ้านของลูกค้า</h2></div>
+      <div class="cust-scroll-tabs" id="customerAssetTabs"></div>
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin:0;" id="assetMainTitle"></h3>
+        <div class="muted" style="font-size:13px;margin-top:2px;" id="assetSubTitle"></div>
+      </div>
+      <div id="assetContent"></div>
+    </section>
+
+    <!-- PAGE 9: แชทลูกค้า -->
+    <section class="page" id="customer-chat">
+      <div class="section-title"><h2>ศูนย์สนทนาแชทกับลูกค้า (Customer Chat)</h2></div>
+      <div class="chat-layout">
+        <div class="chat-users" id="customerUserList"></div>
+        <div class="chat-main">
+          <div style="padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <b id="activeCustomerTitle"></b>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn secondary" style="font-size:11px;" onclick="toggleCustomerPin()" id="pinCustomerBtn">📌 ปักหมุดแชท</button>
+              <button class="btn success" style="font-size:11px;" onclick="sendPaymentInfoToChat()">💳 ส่งบัญชีโอนเงิน</button>
+              <button class="btn secondary" style="font-size:11px;" onclick="sendPhoneInfoToChat()">📞 ส่งเบอร์สำนักงาน</button>
+            </div>
+          </div>
+          <div class="chat-box" id="custChatBox"></div>
+          <div class="chat-input">
+            <input type="text" id="custChatInput" placeholder="พิมพ์ข้อความตอบกลับลูกค้า (ลงท้าย ค่ะ/นะคะ)..." onkeydown="if(event.key==='Enter') sendCustMsg()">
+            <button class="btn" onclick="sendCustMsg()">ส่งข้อความ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 10: จัดการทีมช่าง -->
+    <section class="page" id="teams">
+      <div class="section-title"><h2>จัดการข้อมูลทีมช่าง</h2><button class="btn success" onclick="addNewTeamModal()">+ เพิ่มทีมช่างใหม่</button></div>
+      <div id="teamManagementContainer"></div>
+    </section>
+
+    <!-- PAGE 11: แชทกับช่าง -->
+    <section class="page" id="technician-chat">
+      <div class="section-title"><h2>ระบบแชทสื่อสารกับช่าง</h2></div>
+      <div class="chat-layout">
+        <div class="chat-users" id="techUserList"></div>
+        <div class="chat-main">
+          <div style="padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:10px;"><b id="activeTechTitle"></b></div>
+          <div class="chat-box" id="techChatBox"></div>
+          <div class="chat-input">
+            <input type="text" id="techChatInput" placeholder="พิมพ์ข้อความสื่อสารกับช่าง (ลงท้าย ค่ะ/นะคะ)..." onkeydown="if(event.key==='Enter') sendTechMsg()">
+            <button class="btn" onclick="sendTechMsg()">ส่งข้อความ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 13: ตั้งค่าร้าน -->
+    <section class="page" id="settings">
+      <div class="section-title">
+        <h2>ตั้งค่าข้อมูลร้าน & ช่องทางการติดต่อ (Store Settings)</h2>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><h3 style="margin:0;">ข้อมูลสำนักงานหลัก</h3><button class="btn secondary" style="font-size:11px;" onclick="openStoreSettingsModal()">แก้ไข</button></div>
+          <div class="list">
+            <div class="row"><span>ชื่อร้าน</span><b>Lumina Electric Air</b></div>
+            <div class="row"><span>เบอร์โทรศัพท์สำนักงาน</span><b>02-000-0000</b></div>
+            <div class="row"><span>LINE Official Account</span><b><a href="https://line.me/R/ti/p/@420rkehz" target="_blank" style="color:var(--blue);text-decoration:none;">@420rkehz</a></b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>ตั้งค่าการแจ้งเตือน & บัญชี</h3>
+          <div class="list">
+            <div class="row"><span>การเชื่อมต่อ Blynk IoT</span><span class="tag green">เชื่อมต่อแล้ว</span></div>
+            <div class="row"><span>การเชื่อมต่อ LINE Notification</span><span class="tag green">เชื่อมต่อแล้ว</span></div>
+            <div class="row"><span>เวอร์ชันระบบ</span><b>Lumina Admin v05.0</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 14: โปรไฟล์แอดมิน -->
+    <section class="page" id="profile">
+      <div class="clock-banner">
+        <button class="clock-btn in" onclick="setWorkStatus(true)">เข้าปฏิบัติงาน (Clock-In)</button>
+        <button class="clock-btn out" onclick="setWorkStatus(false)">เลิกปฏิบัติงาน (Clock-Out)</button>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><h3 style="margin:0;">ข้อมูลส่วนตัวแอดมิน</h3><button class="btn secondary" style="font-size:11px;" onclick="openAdminProfileModal()">แก้ไข</button></div>
+          <div class="list">
+            <div class="row"><span>ชื่อ-นามสกุล</span><b>แอดมินสมศรี</b></div>
+            <div class="row"><span>ตำแหน่งงาน</span><b>Admin Officer</b></div>
+            <div class="row"><span>เบอร์โทรศัพท์</span><b>081-554-3322</b></div>
+            <div class="row"><span>อีเมล</span><b>somsri@lumina.com</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>สถิติการปฏิบัติงาน</h3>
+          <div class="grid grid-2" style="margin-top:10px;">
+            <div class="card stat" style="background:#e8faf2;"><span>มาทำงาน</span><strong style="color:var(--green);">22 วัน</strong></div>
+            <div class="card stat" style="background:#fff6e8;"><span>สาย</span><strong style="color:var(--orange);">0 วัน</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Modal Container -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast" id="toast"></div>
+
+<style>
+/* ===== Lumina form & action styles ===== */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+.form-field{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--deep)}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none}
+.form-field textarea{min-height:90px;resize:vertical}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.action-row{display:flex;gap:6px;flex-wrap:wrap}
+.btn.small{font-size:11px;padding:7px 10px}
+.empty-state{text-align:center;padding:36px 20px;background:#fff;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}
+.data-note{font-size:11px;color:var(--muted);margin-top:6px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* =========================================================
+   LUMINA ADMIN — Fully working interactive dashboard
+   Every button performs its labeled action. Data is mutable
+   and persisted in localStorage.
+   ========================================================= */
+(function () {
+  'use strict';
+
+  // ---- Supabase (replaces localStorage as the source of truth for reads;
+  // see loadStateFromSupabase() below) ----
+  const SUPABASE_URL = 'https://juyzslygeglbxninetwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_3ptYldp8jyZtT_KOHGwWZQ_aNN4jV0q';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { storageKey: 'lumina004-auth' } // isolates this app's session from 002/003, which
+                                            // share the same origin (meekiwe.github.io)
+  });
+  window._supabaseClient = supabaseClient; // exposed for the functions defined further down
+
+  let CURRENT_ADMIN_USER = null;
+
+  window.adminLogin = async function () {
+    const email = document.getElementById('adminLoginEmail').value.trim();
+    const pass = document.getElementById('adminLoginPass').value;
+    const errEl = document.getElementById('adminLoginError');
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      console.error('Supabase sign-in error:', error);
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('api key') || msg.includes('apikey')) {
+        errEl.textContent = 'ตั้งค่าระบบไม่สมบูรณ์ (SUPABASE_ANON_KEY ยังไม่ถูกต้อง) กรุณาแจ้งผู้ดูแลระบบ';
+      } else if (msg.includes('fetch') || msg.includes('network')) {
+        errEl.textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่';
+      } else {
+        errEl.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง หรือบัญชีนี้ไม่มีสิทธิ์แอดมิน';
+      }
+      errEl.style.display = 'block';
+      return;
+    }
+    const { data: profile, error: profErr } = await supabaseClient
+      .from('profiles').select('role_id, full_name').eq('id', data.user.id).single();
+    if (profErr || profile.role_id !== 'admin') {
+      errEl.style.display = 'block';
+      await supabaseClient.auth.signOut();
+      return;
+    }
+    errEl.style.display = 'none';
+    CURRENT_ADMIN_USER = data.user;
+    const nameEl = document.getElementById('sidebarAdminName');
+    if (nameEl) nameEl.textContent = profile.full_name || 'แอดมิน';
+    document.getElementById('adminLoginScreen').style.display = 'none';
+    document.getElementById('appRoot').style.display = '';
+    await boot();
+  };
+  window.adminLogout = async function () {
+    await supabaseClient.auth.signOut();
+    CURRENT_ADMIN_USER = null;
+    document.getElementById('appRoot').style.display = 'none';
+    document.getElementById('adminLoginScreen').style.display = 'flex';
+  };
+  (async function checkExistingAdminSession(){
+    const { data } = await supabaseClient.auth.getSession();
+    if (!data.session) return;
+    const { data: profile, error: profErr } = await supabaseClient
+      .from('profiles').select('role_id, full_name').eq('id', data.session.user.id).single();
+    if (profErr || profile.role_id !== 'admin') return;
+    CURRENT_ADMIN_USER = data.session.user;
+    const nameEl = document.getElementById('sidebarAdminName');
+    if (nameEl) nameEl.textContent = profile.full_name || 'แอดมิน';
+    document.getElementById('adminLoginScreen').style.display = 'none';
+    document.getElementById('appRoot').style.display = '';
+    await boot();
+  })();
+
+  // -------------------- helpers --------------------
+  function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, m =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+  }
+  function clone(x) { return JSON.parse(JSON.stringify(x)); }
+  function nextId(prefix, arr, key) {
+    key = key || 'id';
+    let n = arr.length + 1, id;
+    do { id = prefix + String(n).padStart(3, '0'); n++; }
+    while (arr.some(x => String(x[key]) === id));
+    return id;
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+  }
+  function openModal(html) {
+    document.getElementById('modalContent').innerHTML = html;
+    document.getElementById('modal').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+  }
+  function field(label, id, value, type, extra) {
+    type = type || 'text'; extra = extra || '';
+    return `<label class="form-field">${label}<input id="${id}" type="${type}" value="${esc(value)}" ${extra}></label>`;
+  }
+  function selectField(label, id, options, value) {
+    return `<label class="form-field">${label}<select id="${id}">${
+      options.map(o => `<option value="${esc(o)}" ${String(o) === String(value) ? 'selected' : ''}>${esc(o)}</option>`).join('')
+    }</select></label>`;
+  }
+  function req(id, label) {
+    const el = document.getElementById(id);
+    const v = (el && el.value || '').trim();
+    if (!v) { showToast('กรุณากรอก' + label + 'ค่ะ'); if (el) el.focus(); return null; }
+    return v;
+  }
+  const DEFAULT_NEW_ACCOUNT_PASSWORD = 'Lumina2026!';
+  async function nextTeamId(){
+    const { data } = await window._supabaseClient.from('technician_teams').select('id');
+    const used = new Set((data||[]).map(r => r.id));
+    for (let i = 0; i < 26; i++) {
+      const letter = String.fromCharCode(65 + i); // A, B, C, ...
+      if (!used.has(letter)) return letter;
+    }
+    return 'X' + Date.now();
+  }
+  async function nextTechnicianCode(){
+    const { data } = await window._supabaseClient.from('technicians').select('technician_code');
+    const used = new Set((data||[]).map(r => r.technician_code));
+    for (let i = 1; i <= 999; i++) {
+      const code = 'T' + String(i).padStart(2, '0');
+      if (!used.has(code)) return code;
+    }
+    return 'T' + Date.now();
+  }
+  async function resolveOrCreateTeamId(teamName){
+    const { data: existing } = await window._supabaseClient.from('technician_teams')
+      .select('id').eq('name', teamName).maybeSingle();
+    if (existing) return existing.id;
+    const newId = await nextTeamId();
+    await window._supabaseClient.from('technician_teams').insert({ id: newId, name: teamName });
+    return newId;
+  }
+  // `persist()` is kept as a localStorage safety net purely for the handful of
+  // admin actions not yet wired to Supabase (see the summary at the end of
+  // this file) so they don't silently lose in-session edits. Everything that
+  // HAS been wired below writes to Supabase directly instead of relying on this.
+  function persist() {
+    try {
+      localStorage.setItem('lumina_admin_v06_state', JSON.stringify({
+        products: PRODUCTS_DATA,
+        technicians: TECHNICIANS_DATA,
+        customers: CUSTOMERS_DATA,
+        jobs: JOBS_DATA,
+        errors: ERROR_CODES_DATA,
+        chats: CUSTOMER_CHATS,
+        promos: PROMOS,
+        store: STORE,
+        profile: PROFILE,
+        working: isWorking
+      }));
+    } catch (e) {}
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('lumina_admin_v06_state');
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (Array.isArray(s.products)) { PRODUCTS_DATA.length = 0; PRODUCTS_DATA.push(...s.products); }
+      if (Array.isArray(s.technicians)) { TECHNICIANS_DATA.length = 0; TECHNICIANS_DATA.push(...s.technicians); }
+      if (Array.isArray(s.customers)) { CUSTOMERS_DATA.length = 0; CUSTOMERS_DATA.push(...s.customers); }
+      if (Array.isArray(s.jobs)) { JOBS_DATA.length = 0; JOBS_DATA.push(...s.jobs); }
+      if (Array.isArray(s.errors)) { ERROR_CODES_DATA.length = 0; ERROR_CODES_DATA.push(...s.errors); }
+      if (s.chats && typeof s.chats === 'object') {
+        Object.keys(CUSTOMER_CHATS).forEach(k => delete CUSTOMER_CHATS[k]);
+        Object.assign(CUSTOMER_CHATS, s.chats);
+      }
+      if (Array.isArray(s.promos)) { PROMOS.length = 0; PROMOS.push(...s.promos); }
+      if (s.store) Object.assign(STORE, s.store);
+      if (s.profile) Object.assign(PROFILE, s.profile);
+      if (typeof s.working === 'boolean') isWorking = s.working;
+    } catch (e) {}
+  }
+
+  // -------------------- REAL DATA LOAD (replaces loadState() as the primary
+  // source — see boot() at the bottom of this file) --------------------
+  const DEVICE_STATUS_TEXT = {
+    normal: 'ปกติ',
+    broken_reported: 'เสีย (ตามแจ้ง)',
+    broken_error_code: null, // filled in per-row with the real error code below
+    diagnostic_unavailable: 'ไม่มีข้อมูลวินิจฉัย'
+  };
+
+  async function loadStateFromSupabase(){
+    // ---- products ----
+    const { data: products } = await supabaseClient.from('products').select('*').eq('is_available', true).order('id');
+    PRODUCTS_DATA.length = 0;
+    (products||[]).forEach(p => PRODUCTS_DATA.push({
+      id: p.id, brand: p.brand, model: p.model, category: p.category, type: p.type,
+      btu: p.btu, price: Number(p.price), hasPromo: !!p.is_promo
+    }));
+
+    // ---- promotions ----
+    // (this was previously never loaded from Supabase at all — PROMOS stayed
+    // on its hardcoded seed values forever, which combined with the missing
+    // loadPromosFromSupabase() function below made add/edit/delete look
+    // completely broken even though the writes were reaching the database)
+    const { data: promos } = await supabaseClient.from('promotions').select('*').eq('is_active', true).order('created_at');
+    PROMOS.length = 0;
+    (promos||[]).forEach(p => PROMOS.push({
+      id: p.id, title: p.title, detail: p.detail || '', badge: p.badge || '', extra: p.extra || ''
+    }));
+
+    // ---- technicians (+ real point totals + today's attendance-derived status) ----
+    const { data: techs } = await supabaseClient
+      .from('technicians')
+      .select('id, technician_code, position, expertise, experience_years, experience_note, age, profile:profiles(full_name, phone), technician_teams(name)');
+    const { data: pointsTotals } = await supabaseClient.from('technician_points_totals').select('*');
+    const pointsMap = Object.fromEntries((pointsTotals||[]).map(r => [r.technician_id, r.total_points]));
+    const today = new Date().toISOString().slice(0,10);
+    const { data: attendanceToday } = await supabaseClient.from('attendance_logs').select('*').eq('work_date', today);
+    const attMap = Object.fromEntries((attendanceToday||[]).map(a => [a.technician_id, a]));
+    const fmtTime = t => t ? new Date(t).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) + ' น.' : '-';
+    TECHNICIANS_DATA.length = 0;
+    (techs||[]).forEach(t => {
+      const att = attMap[t.id];
+      const workStatus = (att && att.clock_in && !att.clock_out) ? 'กำลังปฏิบัติงาน'
+        : (att && att.clock_out) ? 'หยุดงาน' : 'พร้อมรับงาน';
+      TECHNICIANS_DATA.push({
+        id: t.id, // real uuid now (was 'T01' style) — technician_code kept for display
+        code: t.technician_code,
+        name: t.profile?.full_name || t.technician_code,
+        team: t.technician_teams?.name || '-',
+        position: t.position, age: t.age || null,
+        phone: t.profile?.phone || '-',
+        expertise: t.expertise || '-',
+        experience: t.experience_note || (t.experience_years ? `${t.experience_years} ปี` : '-'),
+        status: workStatus,
+        points: pointsMap[t.id] || 0,
+        clockIn: fmtTime(att?.clock_in), clockOut: fmtTime(att?.clock_out), chat: []
+      });
+    });
+
+    // ---- jobs (+ customer name via join) — loaded before customers so their
+    // summary fields (queue/lastService/statusType) can be derived from real jobs ----
+    const { data: jobs } = await supabaseClient
+      .from('job_orders')
+      .select('id, job_code, booking_id, booking:bookings(booking_code), customer_id, service_type, scheduled_date, scheduled_time_slot, status, progress_percent, team_id, technician_teams(name)')
+      .order('scheduled_date', { ascending: true });
+    JOBS_DATA.length = 0;
+    (jobs||[]).forEach(j => JOBS_DATA.push({
+      id: j.job_code || j.id, dbId: j.id, // dbId is the real uuid used for writes
+      bookingDbId: j.booking_id, bookingId: j.booking?.booking_code || '-',
+      customerId: j.customer_id, service: j.service_type,
+      date: j.scheduled_date ? new Date(j.scheduled_date+'T00:00:00').toLocaleDateString('th-TH') : '-',
+      time: j.scheduled_time_slot || '-',
+      team: j.technician_teams?.name || '-',
+      status: j.status === 'completed' ? 'done' : (j.status === 'pending' ? 'pending' : 'assigned'),
+      dbStatus: j.status, // the real enum, needed for the status-flow buttons
+      progress: j.status
+    }));
+
+    // ---- orphan bookings: any booking with no job_order yet (a fresh
+    // customer/admin/LINE booking that hasn't been converted into a job).
+    // Without this, such a booking is invisible anywhere in the admin UI —
+    // renderBookings/renderPendingJobs both only ever read JOBS_DATA, so a
+    // booking sitting alone in `bookings` (source='line' included) never
+    // showed up at all. Represented here as a job-shaped row with dbId=null
+    // so the existing table/card rendering works unchanged; assignJob()
+    // below creates the real job_order the first time one of these gets assigned.
+    const convertedBookingIds = new Set((jobs||[]).map(j => j.booking_id));
+    const { data: allBookings } = await supabaseClient
+      .from('bookings')
+      .select('id, booking_code, customer_id, property_id, device_id, service_type, requested_date, requested_time_slot, source')
+      .neq('status', 'cancelled')
+      .order('created_at', { ascending: true });
+    (allBookings||[]).forEach(b => {
+      if (convertedBookingIds.has(b.id)) return; // already has a job — already represented above
+      JOBS_DATA.push({
+        id: b.booking_code, dbId: null, // no job_order yet
+        bookingDbId: b.id, propertyId: b.property_id, deviceId: b.device_id,
+        bookingId: b.booking_code,
+        customerId: b.customer_id, service: b.service_type,
+        date: b.requested_date ? new Date(b.requested_date+'T00:00:00').toLocaleDateString('th-TH') : '-',
+        time: b.requested_time_slot || '-',
+        team: '-', status: 'pending', dbStatus: null, progress: 'pending',
+        source: b.source // 'line' shows up here same as 'app'/'admin'/'phone' — no special-casing needed
+      });
+    });
+
+    // ---- customers + properties + devices (nested, matching the original shape) ----
+    const { data: customers } = await supabaseClient
+      .from('profiles')
+      .select('id, full_name, phone, customer_code, customer_properties(id, name, address, is_primary, customer_devices(id, room, status, error_code, product_id))')
+      .eq('role_id', 'customer');
+    CUSTOMERS_DATA.length = 0;
+    (customers||[]).forEach(c => {
+      const custJobs = JOBS_DATA.filter(j => j.customerId === c.id);
+      const active = custJobs.find(j => j.dbStatus !== 'completed' && j.dbStatus !== 'cancelled');
+      const lastDone = [...custJobs].reverse().find(j => j.dbStatus === 'completed');
+      const primaryProp = (c.customer_properties||[]).find(p => p.is_primary) || c.customer_properties?.[0];
+      CUSTOMERS_DATA.push({
+        id: c.id, code: c.customer_code, name: c.full_name, phone: c.phone,
+        address: primaryProp?.address || '-',
+        statusType: active ? 'HAS_QUEUE' : 'NORMAL',
+        lastService: lastDone ? `${lastDone.date} (${lastDone.service})` : 'ยังไม่มีประวัติ',
+        queue: active ? `${active.status === 'pending' ? 'รอแจกงาน' : (active.dbStatus === 'ready' ? 'พร้อมเริ่มงาน' : active.dbStatus === 'on_the_way' ? 'ช่างกำลังเดินทาง' : active.dbStatus === 'arrived' ? 'ช่างถึงหน้างาน' : active.dbStatus === 'in_progress' ? 'กำลังดำเนินการ' : 'มีคิว')} (${active.team})` : 'ยังไม่มีคิวใหม่',
+        pinned: false,
+        houses: (c.customer_properties||[]).map(prop => ({
+          id: prop.id, name: prop.name, address: prop.address,
+          airs: (prop.customer_devices||[]).map(d => ({
+            id: d.id,
+            room: d.room, product: d.product_id,
+            status: d.status === 'broken_error_code' ? `เสีย (Error ${d.error_code})` : (DEVICE_STATUS_TEXT[d.status] || d.status),
+            errorCode: d.error_code || 'normal',
+            arduino: d.status === 'broken_error_code' ? `แจ้งเตือน Error ${d.error_code}` : 'ดึงข้อมูลปกติ'
+          }))
+        }))
+      });
+    });
+
+    // ---- device error events (Blynk / manual / customer-reported) ----
+    // ordered by created_at so the ERR-NNN display label (built at render
+    // time from array position) is deterministic across reloads, not just
+    // whatever order Postgres happened to return rows in
+    const { data: errors } = await supabaseClient
+      .from('device_error_events')
+      .select('id, error_code, source, status, job_order_id, created_at, device:customer_devices(id, room, property:customer_properties(customer_id)), job:job_orders(job_code, technician_teams(name))')
+      .eq('status', 'open')
+      .order('created_at', { ascending: true });
+    ERROR_CODES_DATA.length = 0;
+    (errors||[]).forEach((e, idx) => ERROR_CODES_DATA.push({
+      id: e.id, // real uuid — used internally for edit/assign/delete lookups, never shown
+      displayId: 'ERR-' + String(idx + 1).padStart(3, '0'), // stable, short, presentation-only
+      customerId: e.device?.property?.customer_id, room: e.device?.room,
+      code: e.error_code, detail: e.source === 'blynk' ? 'ตรวจพบจาก Blynk (อุปกรณ์สาธิต)' : 'แจ้งจากลูกค้า/ช่างเทคนิค',
+      team: e.job?.technician_teams?.name || 'ยังไม่มอบหมาย', jobId: e.job?.job_code || '-',
+      jobOrderId: e.job_order_id, deviceId: e.device?.id, status: 'รอจัดการ'
+    }));
+  }
+
+  async function boot(){
+    await loadStateFromSupabase();
+    loadState(); // localStorage overlay ONLY for the not-yet-wired demo entities (promos/store/profile/etc.)
+    if (window._finishBootRender) window._finishBootRender();
+    if (typeof renderTeamManagement === 'function') renderTeamManagement();
+  }
+
+  // -------------------- seed data --------------------
+  const PRODUCTS_DATA = [
+    { id: 'P01', brand: 'Daikin', model: 'FTKF18XV2S', category: 'ติดผนัง', type: 'Inverter', btu: 18000, price: 23900, hasPromo: true },
+    { id: 'P02', brand: 'Mitsubishi', model: 'MSY-GY18VF', category: 'ติดผนัง', type: 'Inverter', btu: 18000, price: 24900, hasPromo: false },
+    { id: 'P03', brand: 'Carrier', model: '42TVAB013', category: 'ติดผนัง', type: 'Inverter', btu: 12000, price: 18900, hasPromo: true },
+    { id: 'P04', brand: 'LG', model: 'ISQ12', category: 'ติดผนัง', type: 'Inverter', btu: 12000, price: 17900, hasPromo: false },
+    { id: 'P05', brand: 'Daikin', model: 'FTKF24WV2S', category: 'ตั้งแขวน', type: 'Inverter', btu: 24000, price: 31900, hasPromo: false },
+    { id: 'P06', brand: 'Carrier', model: '42TVDA018', category: 'สี่ทิศทาง', type: 'Standard', btu: 18000, price: 21900, hasPromo: false }
+  ];
+
+  const BONUS_LIST = [
+    { id: 1, title: 'ส่วนลดชมภาพยนตร์ 200 บาท', pts: 500 },
+    { id: 2, title: 'ส่วนลดร้านอาหาร 500 บาท', pts: 800 },
+    { id: 3, title: 'เงินช่วยเหลือค่าใช้จ่ายจิปาถะ 2,000 บาท', pts: 1000 },
+    { id: 4, title: 'โบนัสพิเศษประจำเดือน เพิ่ม 30%', pts: 3500 },
+    { id: 5, title: 'วันหยุดพิเศษ 1 สัปดาห์ (เลือกวันเอง)', pts: 4000 }
+  ];
+
+  const TECHNICIANS_DATA = [
+    { id: 'T01', name: 'ช่างพีช', team: 'ทีม A', position: 'หัวหน้าทีม', age: 25, phone: '081-111-2233', expertise: 'ระบบ Inverter และงานซ่อมบอร์ด', experience: '5 ปี', status: 'กำลังปฏิบัติงาน', points: 1250, clockIn: '08:15 น.', clockOut: '-', chat: [['tech', 'แอดมินครับ ตอนนี้ผมกำลังเดินทางไปบ้านคุณเธียรภัทร์นะครับ'], ['admin', 'รับทราบค่ะช่างพีช เดินทางปลอดภัยและระมัดระวังนะคะ']] },
+    { id: 'T02', name: 'ช่างปั้น', team: 'ทีม A', position: 'ผู้ช่วยช่าง', age: 23, phone: '081-111-2234', expertise: 'ติดตั้งแอร์และเดินระบบไฟ', experience: '3 ปี', status: 'กำลังปฏิบัติงาน', points: 900, clockIn: '08:18 น.', clockOut: '-', chat: [['tech', 'เตรียมอุปกรณ์ติดตั้งเรียบร้อยครับ'], ['admin', 'รับทราบค่ะช่างปั้น ตรวจอุปกรณ์ให้ครบก่อนออกงานนะคะ']] },
+    { id: 'T03', name: 'ช่างทิว', team: 'ทีม A', position: 'ช่างฝึกหัด', age: 21, phone: '081-111-2235', expertise: 'ล้างแอร์และบำรุงรักษา', experience: '1 ปี', status: 'กำลังปฏิบัติงาน', points: 600, clockIn: '08:20 น.', clockOut: '-', chat: [['tech', 'วันนี้ผมประจำทีม A ครับ'], ['admin', 'รับทราบค่ะช่างทิว']] },
+    { id: 'T04', name: 'ช่างหยก', team: 'ทีม B', position: 'หัวหน้าทีม', age: 24, phone: '082-222-3344', expertise: 'ล้างแอร์และวิเคราะห์อาการเสีย', experience: '4 ปี', status: 'กำลังปฏิบัติงาน', points: 1500, clockIn: '08:22 น.', clockOut: '-', chat: [['tech', 'ล้างแอร์บ้านคุณอนันต์เสร็จแล้วค่ะ'], ['admin', 'รับทราบค่ะช่างหยก บันทึกงานเรียบร้อยนะคะ']] },
+    { id: 'T05', name: 'ช่างซานต้า', team: 'ทีม B', position: 'ผู้ช่วยช่าง', age: 24, phone: '082-222-3345', expertise: 'ระบบน้ำยาและงานติดตั้ง', experience: '3 ปี', status: 'กำลังปฏิบัติงาน', points: 1100, clockIn: '08:23 น.', clockOut: '-', chat: [['tech', 'ผมกำลังช่วยทีม B ตรวจอุปกรณ์ครับ'], ['admin', 'รับทราบค่ะช่างซานต้า']] },
+    { id: 'T06', name: 'ช่างบอส', team: 'ทีม B', position: 'ช่างฝึกหัด', age: 21, phone: '082-222-3346', expertise: 'ล้างแอร์และงานพื้นฐาน', experience: '1 ปี', status: 'กำลังปฏิบัติงาน', points: 850, clockIn: '08:25 น.', clockOut: '-', chat: [['tech', 'กำลังเตรียมอุปกรณ์เสริมครับ'], ['admin', 'รับทราบค่ะช่างบอส ตรวจรายการอุปกรณ์อีกครั้งนะคะ']] },
+    { id: 'T07', name: 'ช่างบะหมี่', team: 'ทีม C', position: 'หัวหน้าทีม', age: 21, phone: '083-333-4455', expertise: 'ตรวจรั่วและระบบน้ำยา', experience: '4 ปี', status: 'กำลังปฏิบัติงาน', points: 1300, clockIn: '08:28 น.', clockOut: '-', chat: [['tech', 'เช็กแอร์รั่วบ้านคุณกิตติเรียบร้อยค่ะ'], ['admin', 'รับทราบค่ะช่างบะหมี่']] },
+    { id: 'T08', name: 'ช่างเอมิล', team: 'ทีม C', position: 'ผู้ช่วยช่าง', age: 21, phone: '083-333-4456', expertise: 'ติดตั้งและบำรุงรักษา', experience: '2 ปี', status: 'กำลังปฏิบัติงาน', points: 950, clockIn: '08:29 น.', clockOut: '-', chat: [['tech', 'วันนี้ฉันช่วยทีม C ค่ะ'], ['admin', 'รับทราบค่ะช่างเอมิล']] },
+    { id: 'T09', name: 'ช่างภีม', team: 'ทีม C', position: 'ช่างฝึกหัด', age: 20, phone: '083-333-4457', expertise: 'ล้างแอร์และตรวจเช็กเบื้องต้น', experience: '1 ปี', status: 'กำลังปฏิบัติงาน', points: 700, clockIn: '08:30 น.', clockOut: '-', chat: [['tech', 'ตรวจอุปกรณ์ก่อนออกงานเรียบร้อยครับ'], ['admin', 'รับทราบค่ะช่างภีม']] }
+  ];
+
+  const CUSTOMERS_DATA = [
+    { id: 'C01', name: 'คุณเธียรภัทร์', phone: '082-123-4567', address: 'ถนนทหาร ซอยสุขสว่าง อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: '15 ม.ค. 2026 (ล้างแอร์)', queue: 'มีคิววันนี้ (ทีม A)', pinned: true, houses: [
+      { name: 'บ้านหลัก', address: 'ถนนทหาร ซอยสุขสว่าง', airs: [
+        { room: 'ห้องนอนใหญ่', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+        { room: 'ห้องนอน 2', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+        { room: 'อาคารพาณิชย์ ชั้น 1', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+      ]},
+      { name: 'บ้านคุณตาคุณยาย', address: 'ซอยสุขสว่าง', airs: [
+        { room: 'ห้องโถงรับแขก', product: 'P04', status: 'เสีย (ตามแจ้ง)', arduino: 'ไม่มี Arduino (เสียตามที่ลูกค้าบอก)' },
+        { room: 'ห้องนอน', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+      ]},
+      { name: 'บ้านคุณปู่คุณย่า', address: 'ซอยสุขสว่าง', airs: [
+        { room: 'ห้องนั่งเล่น', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+      ]}
+    ]},
+    { id: 'C02', name: 'คุณสมพงศ์', phone: '084-556-7788', address: 'ถนนอุดรดุษฎี ซอยมิตรภาพ อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: '02 ก.พ. 2026 (ซ่อมบอร์ด)', queue: 'มีคิววันนี้ (ทีม A)', pinned: false, houses: [{ name: 'บ้านคุณสมพงศ์', address: 'ถนนอุดรดุษฎี ซอยมิตรภาพ', airs: [
+      { room: 'ห้องนั่งเล่น', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C03', name: 'คุณชลธาร', phone: '089-776-5544', address: 'ถนนโพศรี ซอยจินตคาม อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: '10 ธ.ค. 2025 (ติดตั้งใหม่)', queue: 'มีคิววันนี้ (ทีม A)', pinned: false, houses: [{ name: 'บ้านคุณชลธาร', address: 'ถนนโพศรี ซอยจินตคาม', airs: [
+      { room: 'ห้องรับแขก', product: 'P05', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอนใหญ่', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องทำงาน', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C04', name: 'คุณอนันต์', phone: '083-445-6677', address: 'ถนนวัฒนานุวงศ์ อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: 'วันนี้ (ล้างแอร์)', queue: 'เสร็จแล้ววันนี้ (ทีม B)', pinned: false, houses: [{ name: 'บ้านคุณอนันต์', address: 'ถนนวัฒนานุวงศ์', airs: [
+      { room: 'ห้องรับแขก', product: 'P04', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C05', name: 'คุณนภา', phone: '081-223-9911', address: 'ถนนศุภกิจจินดา อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: 'วันนี้ (เช็กน้ำยา)', queue: 'มีคิววันนี้ (ทีม B)', pinned: false, houses: [{ name: 'บ้านคุณนภา', address: 'ถนนศุภกิจจินดา', airs: [
+      { room: 'ห้องรับแขก', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน', product: 'P04', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C06', name: 'คุณกิตติ', phone: '087-112-3344', address: 'ถนนรอบเมือง อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: 'วันนี้ (เช็กแอร์รั่ว)', queue: 'เสร็จแล้ววันนี้ (ทีม C)', pinned: false, houses: [{ name: 'บ้านคุณกิตติ', address: 'ถนนรอบเมือง', airs: [
+      { room: 'ห้องรับแขก', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน 1', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน 2', product: 'P04', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องทำงาน', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C07', name: 'คุณวิชัย', phone: '081-443-8899', address: 'ถนนสุรการ อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: '12 พ.ย. 2025 (ล้างแอร์)', queue: 'มีคิวตรวจสอบ Error U4 (ทีม C)', pinned: false, houses: [{ name: 'บ้านคุณวิชัย', address: 'ถนนสุรการ', airs: [
+      { room: 'ห้องรับแขก', product: 'P05', status: 'เสีย (Error U4)', errorCode: 'U4', arduino: 'แจ้งเตือน Error U4' },
+      { room: 'ห้องนอน', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องทำงาน', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C08', name: 'คุณรัตนา', phone: '089-221-5544', address: 'ถนนศรีสุข ซอย 3 อ.เมืองอุดรธานี', statusType: 'NORMAL', lastService: '20 ธ.ค. 2025 (เติมน้ำยา)', queue: 'ยังไม่มีคิวใหม่ (แอร์ปกติ)', pinned: false, houses: [{ name: 'บ้านคุณรัตนา', address: 'ถนนศรีสุข ซอย 3', airs: [
+      { room: 'ห้องรับแขก', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอนใหญ่', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน 2', product: 'P04', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องทำงาน', product: 'P01', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องโถง', product: 'P06', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C09', name: 'คุณประเสริฐ', phone: '086-778-9900', address: 'ถนนพรหมประกาย อ.เมืองอุดรธานี', statusType: 'HAS_QUEUE', lastService: '08 ม.ค. 2026 (ติดตั้งใหม่)', queue: 'มีคิวตรวจสอบ Error E1 (ทีม C)', pinned: false, houses: [{ name: 'บ้านคุณประเสริฐ', address: 'ถนนพรหมประกาย', airs: [
+      { room: 'ห้องรับแขก', product: 'P01', status: 'เสีย (Error E1)', errorCode: 'E1', arduino: 'แจ้งเตือน Error E1' },
+      { room: 'ห้องนอน', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]},
+    { id: 'C10', name: 'คุณดารินทร์', phone: '082-334-1122', address: 'ถนนเลี่ยงเมือง อ.เมืองอุดรธานี', statusType: 'NORMAL', lastService: '14 ก.พ. 2026 (ล้างประจำปี)', queue: 'ยังไม่มีคิวใหม่ (แอร์ปกติ)', pinned: false, houses: [{ name: 'บ้านคุณดารินทร์', address: 'ถนนเลี่ยงเมือง', airs: [
+      { room: 'ห้องรับแขก', product: 'P05', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอนใหญ่', product: 'P02', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องนอน 2', product: 'P03', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' },
+      { room: 'ห้องทำงาน', product: 'P04', status: 'ปกติ', errorCode: 'normal', arduino: 'ดึงข้อมูลปกติ' }
+    ]}]}
+  ];
+
+  const JOBS_DATA = [
+    { id: 'JOB-C-20260915-001', bookingId: 'BKC-20260915-001', customerId: 'C01', service: 'ล้างแอร์ประจำปี', date: 'วันนี้', time: '10:00', team: 'ทีม A', status: 'pending' },
+    { id: 'JOB-A-20260915-001', bookingId: 'BKA-20260915-001', customerId: 'C03', service: 'ติดตั้งเครื่องใหม่', date: 'พรุ่งนี้', time: '09:00', team: 'ทีม A', status: 'pending' },
+    { id: 'JOB-D-20260915-001', bookingId: 'BKD-20260915-001', customerId: 'C05', service: 'เช็กน้ำยาแอร์', date: 'พรุ่งนี้', time: '13:00', team: 'ทีม B', status: 'pending' },
+    { id: 'JOB-E-20260915-001', bookingId: 'BKE-20260915-001', customerId: 'C07', service: 'ตรวจสอบ Error Code U4', date: '18 ก.ย. 2026', time: '10:00', team: 'ทีม C', status: 'pending' },
+    { id: 'JOB-E-20260915-002', bookingId: 'BKE-20260915-002', customerId: 'C09', service: 'ตรวจสอบ Error Code E1', date: '19 ก.ย. 2026', time: '09:30', team: 'ทีม C', status: 'pending' },
+    { id: 'JOB-D-20260915-002', bookingId: 'BKD-20260915-002', customerId: 'C02', service: 'ตรวจสอบระบบปรับอากาศ', date: 'วันนี้', time: '11:00', team: 'ทีม A', status: 'assigned', progress: 'กำลังปฏิบัติงาน' },
+    { id: 'JOB-B-20260915-001', bookingId: 'BKB-20260915-001', customerId: 'C04', service: 'ล้างแอร์บ้าน', date: 'วันนี้', time: '09:00', team: 'ทีม B', status: 'done', progress: 'เสร็จแล้ววันนี้' },
+    { id: 'JOB-B-20260915-002', bookingId: 'BKB-20260915-002', customerId: 'C06', service: 'เช็กแอร์รั่ว', date: 'วันนี้', time: '11:30', team: 'ทีม C', status: 'done', progress: 'เสร็จแล้ววันนี้' }
+  ];
+
+  const ERROR_CODES_DATA = [
+    { id: 'ERR-001', customerId: 'C07', room: 'ห้องรับแขก', code: 'U4', detail: 'ข้อผิดพลาดในการสื่อสารระหว่างเครื่องภายในและเครื่องภายนอก', team: 'ทีม C', jobId: 'JOB-E-20260915-001', status: 'รอจัดการ' },
+    { id: 'ERR-002', customerId: 'C09', room: 'ห้องรับแขก', code: 'E1', detail: 'แผงวงจรอิเล็กทรอนิกส์ของเครื่องภายนอกผิดปกติ', team: 'ทีม C', jobId: 'JOB-E-20260915-002', status: 'รอจัดการ' }
+  ];
+
+  const CUSTOMER_CHATS = Object.fromEntries(CUSTOMERS_DATA.map(c => [c.id, [
+    ['customer', c.id === 'C01' ? 'สวัสดีค่ะ ต้องการสอบถามเรื่องการโอนชำระเงินค่าวางบิลค่ะ' : `สวัสดีค่ะ ขอสอบถามเรื่องบริการของ Lumina ค่ะ`],
+    ['admin', `สวัสดีค่ะ${c.name} แอดมินยินดีให้บริการค่ะ มีอะไรให้ช่วยแจ้งได้เลยนะคะ`]
+  ]]));
+
+  const PROMOS = [
+    { id: 'PR01', title: 'โปรโมชั่นเครื่องปรับอากาศส่วนลดพิเศษ', detail: 'ส่วนลดพิเศษสำหรับเครื่องปรับอากาศรุ่นที่ร่วมรายการ พร้อมสิทธิ์บริการติดตั้งตามเงื่อนไขของร้าน', badge: 'สิทธิพิเศษสำหรับลูกค้าใหม่', extra: 'เมื่อซื้อเครื่องปรับอากาศตั้งแต่ 3 เครื่องขึ้นไป รับส่วนลดทันที 5,000 บาท' },
+    { id: 'PR02', title: 'โปรโมชั่นล้างแอร์ราคาพิเศษสำหรับลูกค้า Lumina', detail: 'บริการล้างเครื่องปรับอากาศในราคาพิเศษสำหรับลูกค้า Lumina', badge: 'ลูกค้าเก่า 5% | ลูกค้าใหม่ 20%', extra: 'สามารถใช้ร่วมกับคูปองและบัตรสะสมแต้มจาก LINE ตามเงื่อนไข' },
+    { id: 'PR03', title: 'ส่วนลดพิเศษสำหรับแลกเครื่องปรับอากาศเครื่องเก่า', detail: 'ลูกค้านำเครื่องเก่ามาประเมินเพื่อรับส่วนลดสำหรับซื้อเครื่องใหม่', badge: 'Trade-in', extra: 'ส่วนลดขึ้นอยู่กับรุ่น สภาพ อายุการใช้งาน และเงื่อนไขร้าน' }
+  ];
+
+  const STORE = {
+    name: 'Lumina Electric Air',
+    phone: '02-000-0000',
+    address: 'อุดรธานี',
+    hours: '08:00–18:00 น.',
+    line: '@420rkehz',
+    facebook: 'Lumina Electric Air',
+    instagram: '@lumina.electric.air',
+    tiktok: '@lumina.electric.air',
+    bank: 'ธนาคารกสิกรไทย',
+    accountName: 'Lumina Electric Air',
+    accountNo: '123-4-56789-0'
+  };
+
+  const PROFILE = {
+    name: 'แอดมินสมศรี',
+    position: 'Admin Officer',
+    phone: '081-554-3322',
+    email: 'somsri@lumina.com'
+  };
+
+  let currentCustomerId = 'C01';
+  let currentTechId = 'T01';
+  let isWorking = false;
+
+  // -------------------- lookups --------------------
+  function getCustomer(id) { return CUSTOMERS_DATA.find(c => c.id === id); }
+  function getTech(id) { return TECHNICIANS_DATA.find(t => t.id === id); }
+  function customerAirCount(c) { return (c && c.houses || []).reduce((s, h) => s + (h.airs || []).length, 0); }
+  function customerHouseCount(c) { return (c && c.houses || []).length; }
+  function tagClass(text) {
+    return /เสีย|Error|มีคิว|กำลัง/.test(text || '') ? 'red' : /เสร็จ|ปกติ/.test(text || '') ? 'green' : 'orange';
+  }
+  function getAirStatusInfo(a) {
+    const code = (a.errorCode || 'normal').toUpperCase();
+    if (['E1', 'U4', 'F0'].includes(code)) {
+      const detailMap = {
+        E1: 'ตรวจพบความผิดปกติของแผงวงจร',
+        U4: 'ตรวจพบข้อผิดพลาดในการสื่อสารระหว่างเครื่องภายในและเครื่องภายนอก',
+        F0: 'ตรวจพบรหัสข้อผิดพลาด F0 ตามฐานข้อมูลของรุ่นเครื่อง'
+      };
+      return { label: `ขัดข้อง — Error Code ${code}`, tag: 'red', detail: `ระบบติดตามอุปกรณ์ตรวจพบ ${code}: ${detailMap[code]}` };
+    }
+    if (/ไม่มี Arduino|ไม่ได้ติดตั้ง Arduino/i.test(a.arduino || '')) {
+      return { label: 'ขัดข้อง — ไม่ได้ติดตั้ง Arduino', tag: 'red', detail: 'ไม่ได้ติดตั้ง Arduino จึงไม่สามารถรับ Error Code จากอุปกรณ์ได้' };
+    }
+    return { label: 'ปกติ (Normal)', tag: 'green', detail: 'ระบบติดตามอุปกรณ์รายงานสถานะปกติ' };
+  }
+
+  // -------------------- navigation --------------------
+  function navigateToPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // -------------------- HOME / PROMOS --------------------
+  function renderPromos() {
+    const box = document.getElementById('promoContainer');
+    if (!box) return;
+    if (!PROMOS.length) {
+      box.innerHTML = `<div class="empty-state">ยังไม่มีโปรโมชั่น<br><button class="btn" style="margin-top:12px" onclick="addPromo()">+ เพิ่มโปรโมชั่น</button></div>`;
+      return;
+    }
+    box.innerHTML = PROMOS.map((p, i) => `
+      <div class="row">
+        <div>
+          <b style="color:var(--deep);font-size:15px;">${i + 1}. ${esc(p.title)}</b>
+          <div style="font-size:13px;margin-top:4px;line-height:1.5;">
+            ${esc(p.detail)}<br>
+            <span class="tag green" style="margin-top:4px;">${esc(p.badge)}</span> ${esc(p.extra)}
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn secondary small" onclick="editPromo('${esc(p.id)}')">แก้ไข</button>
+          <button class="btn danger small" onclick="deletePromo('${esc(p.id)}')">ลบ</button>
+        </div>
+      </div>`).join('');
+  }
+  window.addPromo = function () {
+    openModal(`<h3>+ เพิ่มโปรโมชั่น</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อโปรโมชั่น', 'promoTitle', '', 'text', 'required')}
+        ${field('ป้าย/สิทธิพิเศษ', 'promoBadge', '', 'text', 'required')}
+        <label class="form-field full">รายละเอียด<textarea id="promoDetail"></textarea></label>
+        <label class="form-field full">เงื่อนไขเพิ่มเติม<textarea id="promoExtra"></textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="savePromoNew()">บันทึกโปรโมชั่น</button>
+      </div>`);
+  };
+  window.savePromoNew = async function () {
+    const title = req('promoTitle', 'ชื่อโปรโมชั่น');
+    const badge = req('promoBadge', 'ป้าย/สิทธิพิเศษ');
+    if (!title || !badge) return;
+    const { error } = await window._supabaseClient.from('promotions').insert({
+      title, badge,
+      detail: document.getElementById('promoDetail').value.trim(),
+      extra: document.getElementById('promoExtra').value.trim(),
+      is_active: true
+    });
+    if (error) { showToast('เพิ่มโปรโมชั่นไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); closeModal(); renderPromos();
+    showToast('เพิ่มโปรโมชั่นเรียบร้อยแล้วค่ะ');
+  };
+  window.editPromo = function (id) {
+    const p = PROMOS.find(x => x.id === id);
+    if (!p) return;
+    openModal(`<h3>แก้ไขโปรโมชั่น</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อโปรโมชั่น', 'promoTitle', p.title, 'text', 'required')}
+        ${field('ป้าย/สิทธิพิเศษ', 'promoBadge', p.badge, 'text', 'required')}
+        <label class="form-field full">รายละเอียด<textarea id="promoDetail">${esc(p.detail)}</textarea></label>
+        <label class="form-field full">เงื่อนไขเพิ่มเติม<textarea id="promoExtra">${esc(p.extra)}</textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="savePromoEdit('${esc(id)}')">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.savePromoEdit = async function (id) {
+    const p = PROMOS.find(x => x.id === id);
+    if (!p) return;
+    const title = req('promoTitle', 'ชื่อโปรโมชั่น');
+    const badge = req('promoBadge', 'ป้าย/สิทธิพิเศษ');
+    if (!title || !badge) return;
+    const { error } = await window._supabaseClient.from('promotions').update({
+      title, badge,
+      detail: document.getElementById('promoDetail').value.trim(),
+      extra: document.getElementById('promoExtra').value.trim()
+    }).eq('id', id);
+    if (error) { showToast('แก้ไขโปรโมชั่นไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); closeModal(); renderPromos();
+    showToast('แก้ไขโปรโมชั่นเรียบร้อยแล้วค่ะ');
+  };
+  window.deletePromo = async function (id) {
+    const p = PROMOS.find(x => x.id === id);
+    if (!p) return;
+    if (!confirm(`ต้องการลบโปรโมชั่น "${p.title}" ใช่หรือไม่?`)) return;
+    const { error } = await window._supabaseClient.from('promotions').update({ is_active: false }).eq('id', id);
+    if (error) { showToast('ลบโปรโมชั่นไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); renderPromos();
+    showToast('ลบโปรโมชั่นเรียบร้อยแล้วค่ะ');
+  };
+
+  function renderHomeStats() {
+    const pending = JOBS_DATA.filter(j => j.status === 'pending').length;
+    const assigned = JOBS_DATA.filter(j => j.status === 'assigned').length;
+    const done = JOBS_DATA.filter(j => j.status === 'done').length;
+    const el = document.getElementById('homePendingCount');
+    if (el) el.textContent = pending + ' รายการ';
+    const stats = document.querySelectorAll('#home .grid-4 .stat strong');
+    if (stats[1]) stats[1].textContent = (assigned + done) + ' รายการ';
+    if (stats[2]) stats[2].textContent = assigned + ' รายการ';
+    if (stats[3]) stats[3].textContent = done + ' รายการ';
+  }
+
+  // -------------------- PRODUCTS --------------------
+  function productForm(p, mode) {
+    p = p || { id: '', brand: '', model: '', category: 'ติดผนัง', type: 'Inverter', btu: 12000, price: '', hasPromo: false };
+    const cats = ['ติดผนัง', 'ตั้งแขวน', 'สี่ทิศทาง'];
+    const types = ['Inverter', 'Standard'];
+    return `<div class="form-grid" style="margin-top:14px;">
+      ${field('รหัสสินค้า', 'pId', p.id, 'text', 'required')}
+      ${field('แบรนด์', 'pBrand', p.brand, 'text', 'required')}
+      ${field('รุ่น', 'pModel', p.model, 'text', 'required')}
+      ${selectField('รูปแบบแอร์', 'pCategory', cats, p.category)}
+      ${selectField('ระบบ', 'pType', types, p.type)}
+      ${field('ขนาด BTU', 'pBtu', p.btu, 'number', 'min="1" required')}
+      ${field('ราคา (บาท)', 'pPrice', p.price, 'number', 'min="0" required')}
+      <label class="form-field full" style="flex-direction:row;align-items:center;gap:8px;">
+        <input id="pPromo" type="checkbox" ${p.hasPromo ? 'checked' : ''} style="width:auto;"> มีโปรโมชั่น
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn success" onclick="${mode === 'edit' ? `saveProductEdit('${esc(p.id)}')` : 'saveProductNew()'}">${mode === 'edit' ? 'บันทึกแก้ไข' : 'สร้างสินค้า'}</button>
+    </div>`;
+  }
+  window.openCreateProductModal = function () {
+    openModal('<h3>+ เพิ่มสินค้าใหม่</h3>' + productForm(null, 'new'));
+  };
+  window.saveProductNew = async function () {
+    const id = req('pId', 'รหัสสินค้า');
+    const brand = req('pBrand', 'แบรนด์');
+    const model = req('pModel', 'รุ่น');
+    if (!id || !brand || !model) return;
+    if (PRODUCTS_DATA.some(p => String(p.id).toLowerCase() === id.toLowerCase())) {
+      showToast('รหัสสินค้านี้มีอยู่แล้วค่ะ'); return;
+    }
+    const btu = Number(document.getElementById('pBtu').value);
+    const price = Number(document.getElementById('pPrice').value);
+    if (!btu || Number.isNaN(price) || price < 0) { showToast('กรุณากรอก BTU และราคาให้ถูกต้องค่ะ'); return; }
+    const { error } = await window._supabaseClient.from('products').insert({
+      id, brand, model,
+      category: document.getElementById('pCategory').value,
+      type: document.getElementById('pType').value,
+      btu, price,
+      is_promo: document.getElementById('pPromo').checked
+    });
+    if (error) { showToast('เพิ่มสินค้าไม่สำเร็จ: ' + error.message); console.error('saveProductNew insert error:', error.code, error.message, error.details, error.hint); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('เพิ่มสินค้าเรียบร้อยแล้วค่ะ');
+  };
+  window.editProduct = function (id) {
+    const p = PRODUCTS_DATA.find(x => x.id === id);
+    if (p) openModal(`<h3>แก้ไขสินค้า: ${esc(p.brand)} ${esc(p.model)}</h3>` + productForm(p, 'edit'));
+  };
+  window.saveProductEdit = async function (oldId) {
+    const p = PRODUCTS_DATA.find(x => x.id === oldId);
+    if (!p) return;
+    const newId = req('pId', 'รหัสสินค้า');
+    const brand = req('pBrand', 'แบรนด์');
+    const model = req('pModel', 'รุ่น');
+    if (!newId || !brand || !model) return;
+    if (PRODUCTS_DATA.some(x => x !== p && String(x.id).toLowerCase() === newId.toLowerCase())) {
+      showToast('รหัสสินค้านี้มีอยู่แล้วค่ะ'); return;
+    }
+    // NOTE: renaming a product's id (newId !== oldId) is intentionally not
+    // supported here — products.id is referenced by customer_devices.product_id,
+    // so a rename would need a dedicated migration step, not a plain UPDATE.
+    if (newId !== oldId) { showToast('ไม่สามารถเปลี่ยนรหัสสินค้าได้ กรุณาลบและสร้างใหม่แทนค่ะ'); return; }
+    const { error } = await window._supabaseClient.from('products').update({
+      brand, model,
+      category: document.getElementById('pCategory').value,
+      type: document.getElementById('pType').value,
+      btu: Number(document.getElementById('pBtu').value),
+      price: Number(document.getElementById('pPrice').value),
+      is_promo: document.getElementById('pPromo').checked
+    }).eq('id', oldId);
+    if (error) { showToast('แก้ไขสินค้าไม่สำเร็จ: ' + error.message); console.error('saveProductEdit update error:', error.code, error.message, error.details, error.hint); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('แก้ไขข้อมูลสินค้าเรียบร้อยแล้วค่ะ');
+  };
+  window.deleteProduct = async function (id) {
+    const p = PRODUCTS_DATA.find(x => x.id === id);
+    if (!p) return;
+    if (!confirm(`ต้องการลบ ${p.brand} ${p.model} ใช่หรือไม่?`)) return;
+    const { error } = await window._supabaseClient.from('products').update({ is_available: false }).eq('id', id);
+    if (error) { showToast('ลบสินค้าไม่สำเร็จ: ' + error.message); console.error('deleteProduct update error:', error.code, error.message, error.details, error.hint); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('นำสินค้าออกจากรายการเรียบร้อยแล้วค่ะ');
+  };
+  window.viewProductDetail = function (id) {
+    const p = PRODUCTS_DATA.find(x => x.id === id);
+    if (!p) return;
+    openModal(`<h3>ข้อมูลสินค้า: ${esc(p.brand)} ${esc(p.model)}</h3>
+      <div class="list" style="margin-top:12px;">
+        <div class="row"><span>รหัสสินค้า</span><b>${esc(p.id)}</b></div>
+        <div class="row"><span>ขนาด BTU</span><b>${Number(p.btu).toLocaleString()} BTU</b></div>
+        <div class="row"><span>รูปแบบ</span><b>${esc(p.category)}</b></div>
+        <div class="row"><span>ระบบ</span><b>${esc(p.type)}</b></div>
+        <div class="row"><span>ราคา</span><b style="color:var(--blue);">฿${Number(p.price).toLocaleString()}</b></div>
+        <div class="row"><span>โปรโมชั่น</span><b>${p.hasPromo ? 'มีโปรโมชั่น' : 'ไม่มีโปรโมชั่น'}</b></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" onclick="editProduct('${esc(p.id)}')">แก้ไข</button>
+        <button class="btn danger" onclick="deleteProduct('${esc(p.id)}')">ลบ</button>
+        <button class="btn outline" onclick="closeModal()">ปิด</button>
+      </div>`);
+  };
+  window.renderProducts = function (items) {
+    const container = document.getElementById('productGridContainer');
+    if (!container) return;
+    if (!items.length) {
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><b>ไม่พบสินค้าตามเงื่อนไขตัวกรองค่ะ</b><br><button class="btn" style="margin-top:12px" onclick="openCreateProductModal()">+ เพิ่มสินค้าใหม่</button></div>`;
+      return;
+    }
+    container.innerHTML = items.map(p => `
+      <div class="product-card">
+        <div>
+          <div class="product-badge-bar">
+            <span class="product-brand">${esc(p.brand).toUpperCase()}</span>
+            <span class="tag">${esc(p.category)}</span>
+          </div>
+          <div class="product-model">${esc(p.model)}</div>
+          <div style="margin-bottom:8px;display:flex;gap:4px;">
+            <span class="tag ${p.type === 'Inverter' ? '' : 'orange'}">${esc(p.type)}</span>
+            ${p.hasPromo ? '<span class="tag green">● มีโปรโมชั่น</span>' : '<span class="tag gray">ไม่มีโปรโมชั่น</span>'}
+          </div>
+          <div class="product-specs">
+            <div><b>BTU:</b> ${Number(p.btu).toLocaleString()}</div>
+            <div><b>ราคา:</b> ฿${Number(p.price).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="product-price-bar">
+          <span class="product-price">฿${Number(p.price).toLocaleString()}</span>
+          <div class="action-row">
+            <button class="btn secondary small" onclick="viewProductDetail('${esc(p.id)}')">ดูรายละเอียด</button>
+            <button class="btn outline small" onclick="editProduct('${esc(p.id)}')">แก้ไข</button>
+            <button class="btn danger small" onclick="deleteProduct('${esc(p.id)}')">ลบ</button>
+          </div>
+        </div>
+      </div>`).join('');
+  };
+  window.applyProductFilters = function () {
+    const cat = document.getElementById('filterCategory').value;
+    const promo = document.getElementById('filterPromo').value;
+    const type = document.getElementById('filterType').value;
+    const btu = document.getElementById('filterBtu').value;
+    const price = document.getElementById('filterPrice').value;
+    const search = (document.getElementById('productSearch')?.value || '').trim().toLowerCase();
+    renderProducts(PRODUCTS_DATA.filter(p => {
+      const searchable = [p.brand, p.model, p.category, p.type, String(p.btu) + ' BTU'].join(' ').toLowerCase();
+      return (cat === 'ALL' || p.category === cat)
+        && (type === 'ALL' || p.type === type)
+        && (btu === 'ALL' || String(p.btu) === btu)
+        && (promo === 'ALL' || (promo === 'HAS_PROMO' ? p.hasPromo : !p.hasPromo))
+        && (price === 'ALL' || p.price <= Number(price))
+        && (!search || searchable.includes(search));
+    }));
+  };
+  window.clearProductFilters = function () {
+    ['filterCategory', 'filterPromo', 'filterType', 'filterBtu', 'filterPrice'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = 'ALL';
+    });
+    const s = document.getElementById('productSearch'); if (s) s.value = '';
+    renderProducts(PRODUCTS_DATA);
+    showToast('ล้างตัวกรองทั้งหมดเรียบร้อยแล้วค่ะ');
+  };
+
+  // -------------------- BOOKINGS / JOBS --------------------
+  function makeBookingId(service) {
+    const prefix = service.includes('Error') ? 'E' : service.includes('ติดตั้ง') ? 'A' : service.includes('ล้าง') ? 'C' : 'D';
+    const d = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    let n = 1;
+    while (JOBS_DATA.some(j => j.bookingId === `BK${prefix}-${d}-${String(n).padStart(3, '0')}`)) n++;
+    return `BK${prefix}-${d}-${String(n).padStart(3, '0')}`;
+  }
+  window.openCreateBookingModal = function () {
+    const opts = CUSTOMERS_DATA.map(c => c.id);
+    openModal(`<h3>+ สร้าง Booking ใหม่</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${selectField('ลูกค้า', 'bCustomer', opts, CUSTOMERS_DATA[0]?.id || '')}
+        <label class="form-field">ชื่อลูกค้า (อ้างอิง)<input id="bCustomerName" readonly value="${esc(CUSTOMERS_DATA[0]?.name || '')}"></label>
+        ${selectField('ประเภทบริการ', 'bService', ['ล้างแอร์ประจำปี', 'ล้างแอร์บ้าน', 'ติดตั้งเครื่องใหม่', 'เช็กน้ำยาแอร์', 'ตรวจสอบระบบปรับอากาศ', 'ตรวจสอบ Error Code', 'ซ่อมเครื่องปรับอากาศ'], 'ล้างแอร์ประจำปี')}
+        ${field('วันที่', 'bDate', '', 'date', 'required')}
+        ${field('เวลา', 'bTime', '10:00', 'time', 'required')}
+        ${selectField('ทีมเบื้องต้น', 'bTeam', ['ทีม A', 'ทีม B', 'ทีม C'], 'ทีม A')}
+        <label class="form-field full">หมายเหตุ<input id="bNote" placeholder="รายละเอียดเพิ่มเติม"></label>
+      </div>
+      <div class="data-note">เมื่อเปลี่ยนรหัสลูกค้า ชื่อลูกค้าจะเปลี่ยนทันที</div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveBookingNew()">สร้าง Booking</button>
+      </div>`);
+    const sel = document.getElementById('bCustomer');
+    const name = document.getElementById('bCustomerName');
+    if (sel) sel.onchange = () => { if (name) name.value = getCustomer(sel.value)?.name || ''; };
+  };
+  window.saveBookingNew = async function () {
+    const customerId = req('bCustomer', 'ลูกค้า');
+    if (!customerId) return;
+    const service = req('bService', 'ประเภทบริการ');
+    const date = req('bDate', 'วันที่');
+    const time = req('bTime', 'เวลา');
+    if (!service || !date || !time) return;
+    const customer = getCustomer(customerId);
+    if (!customer) { showToast('ไม่พบลูกค้าที่เลือกค่ะ'); return; }
+    const primaryHouse = customer.houses[0];
+    const team = document.getElementById('bTeam').value;
+    const note = document.getElementById('bNote').value.trim();
+
+    // uses the same generate_booking_code() function/format as customer-created
+    // bookings (BK<letter>-<yyyymmdd>-<seq>) — the DB trigger fills booking_code in
+    const { data: booking, error: bErr } = await window._supabaseClient.from('bookings').insert({
+      customer_id: customerId, property_id: primaryHouse?.id || null,
+      service_type: service, requested_date: date, requested_time_slot: time,
+      address: primaryHouse?.address || customer.address, phone: customer.phone,
+      status: 'confirmed', source: 'admin'
+    }).select('id, booking_code').single();
+    if (bErr) { showToast('สร้าง Booking ไม่สำเร็จ: ' + bErr.message); return; }
+
+    const { error: jErr } = await window._supabaseClient.from('job_orders').insert({
+      booking_id: booking.id, customer_id: customerId, property_id: primaryHouse?.id || null,
+      service_type: service, scheduled_date: date, scheduled_time_slot: time,
+      team_id: { 'ทีม A':'A', 'ทีม B':'B', 'ทีม C':'C' }[team] || null,
+      details: note || null, status: 'pending'
+    });
+    if (jErr) { showToast('สร้าง Job ไม่สำเร็จ: ' + jErr.message); return; }
+
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast(`สร้าง ${booking.booking_code} สำหรับ ${customer.name} เรียบร้อยแล้วค่ะ`);
+  };
+  function jobStatusLabel(dbStatus){
+    return ({
+      ready: 'พร้อมเริ่มงาน', on_the_way: 'กำลังเดินทาง', arrived: 'ถึงหน้างานแล้ว',
+      in_progress: 'กำลังดำเนินงาน', completed: 'งานเสร็จสิ้น', pending: 'รอมอบหมาย', assigned: 'มอบหมายแล้ว รอเริ่มงาน'
+    })[dbStatus] || dbStatus || 'กำลังดำเนินการ';
+  }
+  window.viewBooking = function (id) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    const c = getCustomer(j.customerId);
+    openModal(`<h3>รายละเอียด Booking</h3>
+      <div class="list" style="margin-top:12px;">
+        <div class="row"><span>Booking ID</span><b>${esc(j.bookingId)}</b></div>
+        <div class="row"><span>JOB ID</span><b>${esc(j.id)}</b></div>
+        <div class="row"><span>ลูกค้า</span><b>${esc(c?.name)}</b></div>
+        <div class="row"><span>บริการ</span><b>${esc(j.service)}</b></div>
+        <div class="row"><span>วันที่ / เวลา</span><b>${esc(j.date)} / ${esc(j.time)} น.</b></div>
+        <div class="row"><span>ทีม</span><b>${esc(j.team || '-')}</b></div>
+        <div class="row"><span>สถานะ</span><b>${j.status === 'pending' ? 'รอแจกงาน' : j.status === 'assigned' ? jobStatusLabel(j.dbStatus) : 'เสร็จแล้ว'}</b></div>
+        <div class="row"><span>ที่อยู่</span><b>${esc(c?.address || '-')}</b></div>
+        <div class="row"><span>โทร</span><b>${esc(c?.phone || '-')}</b></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" onclick="editBooking('${esc(j.id)}')">แก้ไข</button>
+        <button class="btn danger" onclick="deleteBooking('${esc(j.id)}')">ลบ</button>
+        <button class="btn outline" onclick="closeModal()">ปิด</button>
+      </div>`);
+  };
+  window.editBooking = function (id) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    openModal(`<h3>แก้ไข Booking ${esc(j.bookingId)}</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${selectField('ลูกค้า', 'bCustomer', CUSTOMERS_DATA.map(c => c.id), j.customerId)}
+        ${selectField('ประเภทบริการ', 'bService', ['ล้างแอร์ประจำปี', 'ล้างแอร์บ้าน', 'ติดตั้งเครื่องใหม่', 'เช็กน้ำยาแอร์', 'ตรวจสอบระบบปรับอากาศ', 'ตรวจสอบ Error Code', 'ซ่อมเครื่องปรับอากาศ'], j.service)}
+        ${field('วันที่', 'bDate', j.date, 'date', 'required')}
+        ${field('เวลา', 'bTime', j.time, 'time', 'required')}
+        ${selectField('ทีม', 'bTeam', ['ทีม A', 'ทีม B', 'ทีม C'], j.team || 'ทีม A')}
+        ${selectField('สถานะ', 'bStatus', ['pending', 'assigned', 'done'], j.status)}
+        <label class="form-field full">หมายเหตุ<textarea id="bNote">${esc(j.note || '')}</textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveBookingEdit('${esc(id)}')">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.saveBookingEdit = async function (id) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    const customerId = document.getElementById('bCustomer').value;
+    const service = document.getElementById('bService').value;
+    const date = document.getElementById('bDate').value;
+    const time = document.getElementById('bTime').value;
+    const teamName = document.getElementById('bTeam').value;
+    const note = document.getElementById('bNote').value.trim();
+    const teamId = { 'ทีม A':'A', 'ทีม B':'B', 'ทีม C':'C' }[teamName] || null;
+
+    if (j.bookingDbId) {
+      const { error: bErr } = await window._supabaseClient.from('bookings').update({
+        customer_id: customerId, service_type: service, requested_date: date, requested_time_slot: time
+      }).eq('id', j.bookingDbId);
+      if (bErr) { showToast('แก้ไข Booking ไม่สำเร็จ: ' + bErr.message); console.error(bErr); return; }
+    }
+    if (j.dbId) {
+      // status intentionally not editable from this form — the real 5-step
+      // flow (พร้อมเริ่มงาน → ... → งานเสร็จสิ้น) is protected and only moves
+      // via the technician's own status buttons or assignJob(); this form
+      // only edits booking-level details
+      const { error: jErr } = await window._supabaseClient.from('job_orders').update({
+        customer_id: customerId, service_type: service, team_id: teamId,
+        scheduled_date: date, scheduled_time_slot: time, details: note || null
+      }).eq('id', j.dbId);
+      if (jErr) { showToast('แก้ไข Job ไม่สำเร็จ: ' + jErr.message); console.error(jErr); return; }
+    }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('แก้ไข Booking เรียบร้อยแล้วค่ะ');
+  };
+  window.deleteBooking = async function (id) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    if (!confirm(`ลบ Booking ${j.bookingId} ใช่หรือไม่?`)) return;
+    // delete the job_order first if one exists (a booking can't be deleted
+    // while a job still references it), then the booking itself
+    if (j.dbId) {
+      const { error: jobErr } = await window._supabaseClient.from('job_orders').delete().eq('id', j.dbId);
+      if (jobErr) { showToast('ลบไม่สำเร็จ: ' + jobErr.message); console.error(jobErr); return; }
+    }
+    if (j.bookingDbId) {
+      const { error: bookErr } = await window._supabaseClient.from('bookings').delete().eq('id', j.bookingDbId);
+      if (bookErr) { showToast('ลบไม่สำเร็จ: ' + bookErr.message); console.error(bookErr); return; }
+    }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('ลบ Booking เรียบร้อยแล้วค่ะ');
+  };
+  window.assignJob = async function (jobId, technicianId, teamId) {
+    const job = JOBS_DATA.find(j => j.id === jobId);
+    if (!job) return;
+    const tech = TECHNICIANS_DATA.find(t => t.id === technicianId);
+    let error;
+    if (job.dbId) {
+      // an existing job_order — just reassign it
+      ({ error } = await window._supabaseClient.from('job_orders')
+        .update({ assigned_tech_id: technicianId, team_id: teamId, status: 'assigned' })
+        .eq('id', job.dbId));
+    } else {
+      // orphan booking (no job_order yet, e.g. a fresh customer/LINE booking) —
+      // this is the first assignment, so create the job_order now
+      ({ error } = await window._supabaseClient.from('job_orders').insert({
+        booking_id: job.bookingDbId, customer_id: job.customerId,
+        property_id: job.propertyId || null, device_id: job.deviceId || null,
+        assigned_tech_id: technicianId, team_id: teamId,
+        service_type: job.service, status: 'assigned'
+      }));
+    }
+    if (error) { showToast('มอบหมายงานไม่สำเร็จ กรุณาลองใหม่'); console.error(error); return; }
+    await loadStateFromSupabase();
+    renderAllData();
+    showToast(`มอบหมาย ${jobId} ให้ ${tech ? tech.name : 'ช่างที่เลือก'} แล้วค่ะ`);
+  };
+  window.openAssignModal = function (id) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    const teamOptions = ['ทีม A', 'ทีม B', 'ทีม C'];
+    openModal(`<h3>แจกงาน ${esc(j.id)}</h3>
+      <p class="muted">${esc(getCustomer(j.customerId)?.name || '')} — ${esc(j.service)}</p>
+      ${selectField('เลือกทีมช่าง', 'assignTeam', teamOptions, j.team || 'ทีม A')}
+      ${selectField('เลือกช่างเทคนิค', 'assignTech', TECHNICIANS_DATA.map(t => t.name), TECHNICIANS_DATA[0]?.name || '')}
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="assignJobFromModal('${esc(id)}')">ยืนยันแจกงาน</button>
+      </div>`);
+  };
+  window.assignJobFromModal = function (id) {
+    const teamName = document.getElementById('assignTeam').value;
+    const techName = document.getElementById('assignTech').value;
+    const tech = TECHNICIANS_DATA.find(t => t.name === techName);
+    const teamLetter = { 'ทีม A':'A', 'ทีม B':'B', 'ทีม C':'C' }[teamName] || 'A';
+    assignJob(id, tech ? tech.id : null, teamLetter);
+    closeModal();
+  };
+  window.updateJobStatus = async function (id, status) {
+    const j = JOBS_DATA.find(x => x.id === id);
+    if (!j) return;
+    if (!j.dbId) { showToast('ยังไม่มี JOB สำหรับ Booking นี้ กรุณามอบหมายช่างก่อนค่ะ'); return; }
+    // maps the admin dashboard's simplified pending/assigned/done view onto the
+    // real 5-step enum job_orders.status actually uses (see schema comments)
+    const dbStatus = status === 'done' ? 'completed' : (status === 'pending' ? 'pending' : 'assigned');
+    const { error } = await window._supabaseClient.from('job_orders')
+      .update({ status: dbStatus }).eq('id', j.dbId);
+    if (error) { showToast('อัปเดตสถานะงานไม่สำเร็จ'); console.error(error); return; }
+    await loadStateFromSupabase();
+    renderAllData();
+    showToast('อัปเดตสถานะงานเรียบร้อยแล้วค่ะ');
+  };
+  window.renderBookings = function () {
+    const body = document.getElementById('bookingTableBody');
+    if (!body) return;
+    if (!JOBS_DATA.length) {
+      body.innerHTML = '<tr><td colspan="7"><div class="empty-state">ยังไม่มี Booking</div></td></tr>';
+      return;
+    }
+    body.innerHTML = JOBS_DATA.map(j => {
+      const c = getCustomer(j.customerId);
+      return `<tr>
+        <td><b>${esc(j.bookingId || '-')}</b><div class="muted" style="font-size:10px;margin-top:3px;">JOB: ${esc(j.id)}</div></td>
+        <td>${esc(c?.name || '-')}</td>
+        <td><span class="tag ${j.status === 'done' ? 'green' : j.status === 'assigned' ? 'red' : 'orange'}">${esc(j.service)}</span></td>
+        <td>${esc(j.date)} (${esc(j.time)})</td>
+        <td>${esc(c?.address || '-')}</td>
+        <td>${esc(c?.phone || '-')}</td>
+        <td>
+          <span class="tag ${j.status === 'done' ? 'green' : j.status === 'assigned' ? 'red' : 'orange'}">${
+            j.status === 'done' ? 'เสร็จแล้ว' : j.status === 'assigned' ? `${esc(jobStatusLabel(j.dbStatus))} (${esc(j.team)})` : `รอแจกงาน (${esc(j.team)})`
+          }</span>
+          <div class="action-row" style="margin-top:7px">
+            <button class="btn secondary small" onclick="viewBooking('${esc(j.id)}')">ดู</button>
+            <button class="btn outline small" onclick="editBooking('${esc(j.id)}')">แก้ไข</button>
+            <button class="btn danger small" onclick="deleteBooking('${esc(j.id)}')">ลบ</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  };
+  window.renderPendingJobs = function () {
+    const box = document.getElementById('pendingJobList');
+    if (!box) return;
+    const pending = JOBS_DATA.filter(j => j.status === 'pending');
+    box.innerHTML = pending.length ? pending.map(j => {
+      const c = getCustomer(j.customerId);
+      return `<div class="job-card" data-job-id="${esc(j.id)}">
+        <div class="job-head">
+          <div>
+            <b style="font-size:16px;">${esc(j.id)} — ${esc(c?.name)}</b>
+            <div class="muted" style="margin-top:4px;">ประเภทงาน: <b>[${esc(j.service)}]</b> ${customerAirCount(c || { houses: [] })} เครื่อง</div>
+            <div class="muted">นัดหมาย: ${esc(j.date)} เวลา ${esc(j.time)} น. | ที่อยู่: ${esc(c?.address || '-')}</div>
+          </div>
+          <span class="tag orange">สถานะ: รอแจกงาน</span>
+        </div>
+        <div class="job-actions">
+          <button class="btn" onclick="openAssignModal('${esc(j.id)}')">แจกงาน</button>
+          <button class="btn secondary" onclick="viewBooking('${esc(j.id)}')">ดูรายละเอียด</button>
+          <button class="btn outline" onclick="editBooking('${esc(j.id)}')">แก้ไข</button>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty-state">ไม่มีงานที่รอแจกจ่ายค่ะ</div>';
+  };
+  window.renderAssignedJobs = function () {
+    const box = document.getElementById('assignedJobList');
+    if (!box) return;
+    const jobs = JOBS_DATA.filter(j => j.status !== 'pending');
+    box.innerHTML = jobs.length ? jobs.map(j => {
+      const c = getCustomer(j.customerId);
+      const cls = j.status === 'done' ? 'green' : 'orange';
+      return `<div class="job-card" style="border-left:4px solid var(--${cls});">
+        <div class="job-head">
+          <div>
+            <b style="font-size:16px;">${esc(j.id)} — ${esc(c?.name)}</b>
+            <div class="muted" style="margin-top:2px;">ประเภทงาน: <b>[${esc(j.service)}]</b> | ทีมรับผิดชอบ: <b>${esc(j.team)}</b> | ${customerAirCount(c || { houses: [] })} เครื่อง</div>
+            <div class="muted">สถานที่: ${esc(c?.address || '-')}</div>
+          </div>
+          <span class="tag ${cls}">${esc(j.team)}: ${esc(jobStatusLabel(j.dbStatus))}</span>
+        </div>
+        <div class="job-actions">
+          <button class="btn secondary" onclick="viewBooking('${esc(j.id)}')">ดูรายละเอียด</button>
+          <button class="btn outline" onclick="editBooking('${esc(j.id)}')">แก้ไข</button>
+          ${j.status !== 'done'
+            ? `<button class="btn success" onclick="updateJobStatus('${esc(j.id)}','done')">ทำเครื่องหมายเสร็จสิ้น</button>`
+            : `<button class="btn outline" onclick="updateJobStatus('${esc(j.id)}','assigned')">เปิดงานอีกครั้ง</button>`}
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty-state">ยังไม่มีงานที่แจกจ่ายแล้วค่ะ</div>';
+  };
+
+  // -------------------- ERROR CODES --------------------
+  window.openErrorModal = function (id) {
+    const e = ERROR_CODES_DATA.find(x => x.id === id);
+    if (!e) return;
+    openModal(`<h3>จัดการ Error Code ${esc(e.code)}</h3>
+      <p class="muted">${esc(getCustomer(e.customerId)?.name || '')} — ${esc(e.room)} — รหัสนี้มาจากสัญญาณอุปกรณ์จริง (Blynk/Arduino) แก้ไขได้เฉพาะสถานะการจัดการเท่านั้น</p>
+      <div class="form-grid" style="margin-top:14px;">
+        ${selectField('สถานะ', 'eStatus', ['รอจัดการ', 'กำลังดำเนินการ', 'แก้ไขแล้ว'], e.status || 'รอจัดการ')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveErrorEdit('${esc(id)}')">บันทึก</button>
+      </div>`);
+  };
+  window.saveErrorEdit = async function (id) {
+    const e = ERROR_CODES_DATA.find(x => x.id === id);
+    if (!e) return;
+    const statusText = document.getElementById('eStatus').value;
+    const dbStatus = statusText === 'แก้ไขแล้ว' ? 'resolved' : statusText === 'กำลังดำเนินการ' ? 'acknowledged' : 'open';
+    const { error } = await window._supabaseClient.from('device_error_events').update({
+      status: dbStatus, resolved_at: dbStatus === 'resolved' ? new Date().toISOString() : null
+    }).eq('id', id);
+    if (error) { showToast('แก้ไข Error Code ไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('แก้ไข Error Code เรียบร้อยแล้วค่ะ');
+  };
+  window.deleteError = async function (id) {
+    const e = ERROR_CODES_DATA.find(x => x.id === id);
+    if (!e) return;
+    if (!confirm(`ทำเครื่องหมาย Error Code ${e.code} ว่าแก้ไขแล้วและนำออกจากรายการที่ต้องจัดการใช่หรือไม่?`)) return;
+    // marks resolved rather than hard-deleting — the event is a historical
+    // record of a real signal from the device, not admin-created data
+    const { error } = await window._supabaseClient.from('device_error_events')
+      .update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', id);
+    if (error) { showToast('ดำเนินการไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); renderAllData();
+    showToast('ทำเครื่องหมาย Error Code ว่าแก้ไขแล้วเรียบร้อยค่ะ');
+  };
+  window.openAssignError = function (id) {
+    const e = ERROR_CODES_DATA.find(x => x.id === id);
+    if (!e) return;
+    openModal(`<h3>ติดตามคิว Error ${esc(e.code)}</h3>
+      <p class="muted">${esc(getCustomer(e.customerId)?.name || '')} — ${esc(e.room)}</p>
+      ${e.jobOrderId
+        ? selectField('ทีมช่าง', 'errTeam', ['ทีม A', 'ทีม B', 'ทีม C'], e.team)
+        : `<p class="muted">ยังไม่มี Booking/JOB สำหรับ Error นี้ กรุณาสร้าง Booking (ประเภทบริการ "ตรวจสอบ Error Code") ให้ลูกค้ารายนี้ก่อน แล้วค่อยกลับมาติดตามคิวค่ะ</p>`}
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        ${e.jobOrderId ? `<button class="btn success" onclick="saveErrorTeam('${esc(id)}')">บันทึกทีม</button>` : ''}
+      </div>`);
+  };
+  window.saveErrorTeam = async function (id) {
+    const e = ERROR_CODES_DATA.find(x => x.id === id);
+    if (!e || !e.jobOrderId) return;
+    const teamName = document.getElementById('errTeam').value;
+    const teamId = { 'ทีม A':'A', 'ทีม B':'B', 'ทีม C':'C' }[teamName] || null;
+    const { error } = await window._supabaseClient.from('job_orders').update({ team_id: teamId }).eq('id', e.jobOrderId);
+    if (error) { showToast('บันทึกทีมไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast(`ติดตามคิว ${teamName} เรียบร้อยแล้วค่ะ`);
+  };
+  window.renderErrors = function () {
+    const body = document.getElementById('errorCodeTableBody');
+    if (!body) return;
+    body.innerHTML = ERROR_CODES_DATA.length ? ERROR_CODES_DATA.map(e => {
+      const c = getCustomer(e.customerId);
+      return `<tr>
+        <td><b>${esc(e.displayId)}</b></td>
+        <td>${esc(c?.name || '-')} (${esc(e.room)})</td>
+        <td><span class="tag red">${esc(e.code)}</span></td>
+        <td>${esc(e.detail)}</td>
+        <td>
+          <span class="tag ${e.status === 'แก้ไขแล้ว' ? 'green' : 'red'}">${esc(e.status || e.team)}</span>
+          <div class="muted" style="font-size:10px;margin-top:3px;">${esc(e.team)} | JOB: ${esc(e.jobId)}</div>
+        </td>
+        <td>
+          <div class="action-row">
+            <button class="btn secondary small" onclick="openErrorModal('${esc(e.id)}')">แก้ไข</button>
+            <button class="btn outline small" onclick="openAssignError('${esc(e.id)}')">ติดตามคิว</button>
+            <button class="btn danger small" onclick="deleteError('${esc(e.id)}')">ลบ</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="6"><div class="empty-state">ยังไม่มี Error Code ค่ะ</div></td></tr>';
+  };
+
+  // -------------------- CUSTOMERS --------------------
+  window.openCreateCustomerModal = function () {
+    openModal(`<h3>+ เพิ่มลูกค้าใหม่</h3>
+      <p class="muted" style="margin-bottom:8px;">การสร้างลูกค้าใหม่จะสร้างบัญชีเข้าสู่ระบบจริงให้ลูกค้าใช้ล็อกอินแอป 002 ด้วยค่ะ</p>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อ-นามสกุล', 'cName', '', 'text', 'required')}
+        ${field('เบอร์โทรศัพท์', 'cPhone', '', 'tel', 'required')}
+        ${field('อีเมล (ใช้ล็อกอิน)', 'cEmail', '', 'email', 'required')}
+        ${field('รหัสผ่านเริ่มต้น', 'cPassword', 'Lumina2026!', 'text', 'required')}
+        <label class="form-field full">ที่อยู่บ้านหลัก<textarea id="cAddress" placeholder="ที่อยู่สำหรับให้บริการ"></textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveCustomerNew()">สร้างลูกค้า</button>
+      </div>`);
+  };
+  window.saveCustomerNew = async function () {
+    const name = req('cName', 'ชื่อ-นามสกุล');
+    const phone = req('cPhone', 'เบอร์โทรศัพท์');
+    const email = req('cEmail', 'อีเมล');
+    const password = req('cPassword', 'รหัสผ่าน');
+    if (!name || !phone || !email || !password) return;
+    const address = document.getElementById('cAddress').value.trim() || 'ยังไม่ได้ระบุที่อยู่';
+
+    // Creating a real login requires the service-role key, which the browser
+    // must never hold — this calls the admin-create-account Edge Function
+    // instead (see /supabase/functions/admin-create-account).
+    const { data, error } = await window._supabaseClient.functions.invoke('admin-create-account', {
+      body: { email, password, full_name: name, phone, role: 'customer' }
+    });
+    if (error || data?.error) {
+      showToast('สร้างบัญชีลูกค้าไม่สำเร็จ: ' + (data?.error || error.message));
+      return;
+    }
+    const newId = data.id;
+    await window._supabaseClient.from('customer_properties').insert({
+      customer_id: newId, name: 'บ้านหลัก', address, is_primary: true
+    });
+    await loadStateFromSupabase();
+    closeModal(); renderAllData();
+    showToast(`เพิ่ม ${name} เรียบร้อยแล้วค่ะ (อีเมลล็อกอิน: ${email})`);
+  };
+  window.openEditCustomerModal = function (id) {
+    const c = getCustomer(id);
+    if (!c) return;
+    openModal(`<h3>แก้ไขข้อมูลลูกค้า: ${esc(c.name)}</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อ-นามสกุล', 'cName', c.name, 'text', 'required')}
+        ${field('เบอร์โทรศัพท์', 'cPhone', c.phone, 'tel', 'required')}
+        <label class="form-field full">ที่อยู่บ้านหลัก<textarea id="cAddress">${esc(c.address)}</textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveCustomerEdit('${esc(id)}')">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.saveCustomerEdit = async function (id) {
+    const c = getCustomer(id);
+    if (!c) return;
+    const name = req('cName', 'ชื่อ-นามสกุล');
+    const phone = req('cPhone', 'เบอร์โทรศัพท์');
+    if (!name || !phone) return;
+    const address = document.getElementById('cAddress').value.trim();
+    const { error: profErr } = await window._supabaseClient.from('profiles')
+      .update({ full_name: name, phone }).eq('id', id);
+    if (profErr) { showToast('แก้ไขข้อมูลลูกค้าไม่สำเร็จ'); console.error(profErr); return; }
+    const primary = c.houses.find(h => h.address === c.address) || c.houses[0];
+    if (primary && primary.id) {
+      await window._supabaseClient.from('customer_properties').update({ address }).eq('id', primary.id);
+    }
+    await loadStateFromSupabase();
+    closeModal(); renderAllData();
+    showToast('แก้ไขข้อมูลลูกค้าเรียบร้อยแล้วค่ะ');
+  };
+  window.deleteCustomer = async function (id) {
+    const c = getCustomer(id);
+    if (!c) return;
+    if (!confirm(`ลบ ${c.name} และข้อมูลบ้าน/เครื่อง/ประวัติทั้งหมดใช่หรือไม่? การลบนี้ย้อนกลับไม่ได้ค่ะ`)) return;
+    // deletes the profile row and (per the 0004 cascade patch) every dependent
+    // property/device/booking/job/review/chat row. NOTE: this does NOT delete
+    // the underlying Supabase Auth login itself — that needs the service-role
+    // key, i.e. a small addition to the admin-create-account Edge Function
+    // (an `action:"delete"` branch) which is not yet built; see completion report.
+    const { error } = await window._supabaseClient.from('profiles').delete().eq('id', id);
+    if (error) { showToast('ลบไม่สำเร็จ: ' + error.message); console.error(error); return; }
+    await loadStateFromSupabase();
+    renderAllData();
+    showToast('ลบข้อมูลลูกค้าเรียบร้อยแล้วค่ะ');
+  };
+  window.filterCustomerTable = function (filterType, btn) {
+    document.querySelectorAll('.filter-pills .pill-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('#customerTableBody tr').forEach(row => {
+      row.style.display = (filterType === 'ALL' || row.dataset.type === filterType) ? '' : 'none';
+    });
+  };
+  window.openCustomer = function (id) {
+    currentCustomerId = id;
+    renderCustomerAssets(id);
+    navigateToPage('customer-assets');
+  };
+  window.renderCustomers = function () {
+    const body = document.getElementById('customerTableBody');
+    if (!body) return;
+    body.innerHTML = CUSTOMERS_DATA.length ? CUSTOMERS_DATA.map((c, i) => `
+      <tr data-type="${esc(c.statusType)}" data-customer-id="${esc(c.id)}">
+        <td><b>${i + 1}. ${esc(c.name)}</b></td>
+        <td>${esc(c.phone)}</td>
+        <td>${esc(c.address)}</td>
+        <td>${customerAirCount(c)} เครื่อง (${customerHouseCount(c)} บ้าน)</td>
+        <td>${esc(c.lastService || 'ยังไม่มีประวัติ')}</td>
+        <td><span class="tag ${tagClass(c.queue || '')}">${esc(c.queue || '-')}</span></td>
+        <td>
+          <div class="action-row">
+            <button class="btn secondary small" onclick="openCustomer('${esc(c.id)}')">บ้าน & เครื่อง</button>
+            <button class="btn outline small" onclick="openEditCustomerModal('${esc(c.id)}')">แก้ไข</button>
+            <button class="btn danger small" onclick="deleteCustomer('${esc(c.id)}')">ลบ</button>
+          </div>
+        </td>
+      </tr>`).join('') : '<tr><td colspan="7"><div class="empty-state">ยังไม่มีลูกค้าค่ะ</div></td></tr>';
+  };
+
+  // -------------------- CUSTOMER ASSETS --------------------
+  window.renderCustomerAssetTabs = function () {
+    const box = document.getElementById('customerAssetTabs');
+    if (!box) return;
+    box.innerHTML = CUSTOMERS_DATA.map((c, i) =>
+      `<button class="cust-tab-btn ${c.id === currentCustomerId ? 'active' : ''}" onclick="switchCustomerAssetTab('${esc(c.id)}',this)">${i + 1}. ${esc(c.name)} (${customerAirCount(c)} เครื่อง)</button>`
+    ).join('');
+  };
+  window.switchCustomerAssetTab = function (id, btn) {
+    currentCustomerId = id;
+    document.querySelectorAll('.cust-scroll-tabs .cust-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderCustomerAssets(id);
+  };
+  window.openCreateHouseModal = function (customerId) {
+    const c = getCustomer(customerId);
+    if (!c) return;
+    openModal(`<h3>+ เพิ่มบ้าน — ${esc(c.name)}</h3>
+      ${field('ชื่อบ้าน', 'hName', '', 'text', 'required')}
+      ${field('ที่อยู่บ้าน', 'hAddress', c.address, 'text', 'required')}
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveHouseNew('${esc(customerId)}')">เพิ่มบ้าน</button>
+      </div>`);
+  };
+  window.saveHouseNew = async function (customerId) {
+    const c = getCustomer(customerId);
+    if (!c) return;
+    const name = req('hName', 'ชื่อบ้าน');
+    const address = req('hAddress', 'ที่อยู่บ้าน');
+    if (!name || !address) return;
+    const { error } = await window._supabaseClient.from('customer_properties')
+      .insert({ customer_id: customerId, name, address, is_primary: c.houses.length === 0 });
+    if (error) { showToast('เพิ่มบ้านไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    closeModal(); renderAllData(); renderCustomerAssets(customerId);
+    showToast('เพิ่มบ้านเรียบร้อยแล้วค่ะ');
+  };
+  window.openEditHouseModal = function (customerId, houseIndex) {
+    const c = getCustomer(customerId);
+    const h = c && c.houses[houseIndex];
+    if (!h) return;
+    openModal(`<h3>แก้ไขข้อมูลบ้าน</h3>
+      ${field('ชื่อบ้าน', 'hName', h.name, 'text', 'required')}
+      ${field('ที่อยู่บ้าน', 'hAddress', h.address, 'text', 'required')}
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveHouseEdit('${esc(customerId)}',${houseIndex})">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.saveHouseEdit = async function (customerId, i) {
+    const c = getCustomer(customerId);
+    const h = c && c.houses[i];
+    if (!h) return;
+    const name = req('hName', 'ชื่อบ้าน');
+    const address = req('hAddress', 'ที่อยู่บ้าน');
+    if (!name || !address) return;
+    const { error } = await window._supabaseClient.from('customer_properties')
+      .update({ name, address }).eq('id', h.id);
+    if (error) { showToast('แก้ไขบ้านไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    closeModal(); renderAllData(); renderCustomerAssets(customerId);
+    showToast('แก้ไขบ้านเรียบร้อยแล้วค่ะ');
+  };
+  window.deleteHouse = async function (customerId, i) {
+    const c = getCustomer(customerId);
+    const h = c && c.houses[i];
+    if (!h) return;
+    if (!confirm(`ลบ ${h.name} และเครื่องทั้งหมดในบ้านนี้ใช่หรือไม่?`)) return;
+    // customer_devices rows under this property cascade-delete automatically (0001 schema)
+    const { error } = await window._supabaseClient.from('customer_properties').delete().eq('id', h.id);
+    if (error) { showToast('ลบบ้านไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    renderAllData(); renderCustomerAssets(customerId);
+    showToast('ลบบ้านเรียบร้อยแล้วค่ะ');
+  };
+  window.openCreateAirModal = function (customerId, houseIndex) {
+    const c = getCustomer(customerId);
+    const h = c && c.houses[houseIndex];
+    if (!h) return;
+    openModal(`<h3>+ เพิ่มเครื่องปรับอากาศ</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ห้อง', 'aRoom', '', 'text', 'required')}
+        ${selectField('รุ่นสินค้า', 'aProduct', PRODUCTS_DATA.map(p => p.id), PRODUCTS_DATA[0]?.id || '')}
+        ${selectField('สถานะ', 'aStatus', ['ปกติ', 'เสีย (ตามแจ้ง)'], 'ปกติ')}
+        ${selectField('Error Code', 'aError', ['normal', 'E1', 'U4', 'F0'], 'normal')}
+        ${field('ล้างล่าสุด', 'aCleaned', '', 'text')}
+        ${field('ประกันสิ้นสุด', 'aWarranty', '', 'text')}
+        <label class="form-field full">สถานะ Arduino / IoT<input id="aArduino" value="ดึงข้อมูลปกติ"></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveAirNew('${esc(customerId)}',${houseIndex})">เพิ่มเครื่อง</button>
+      </div>`);
+  };
+  function mapUiDeviceStatus(statusText, errorCodeValue) {
+    if (errorCodeValue && errorCodeValue !== 'normal') return 'broken_error_code';
+    if (statusText === 'เสีย (ตามแจ้ง)') return 'broken_reported';
+    return 'normal';
+  }
+  window.saveAirNew = async function (customerId, i) {
+    const c = getCustomer(customerId);
+    const h = c && c.houses[i];
+    if (!h) return;
+    const room = req('aRoom', 'ห้อง');
+    if (!room) return;
+    const statusText = document.getElementById('aStatus').value;
+    const errorCodeValue = document.getElementById('aError').value;
+    const { error } = await window._supabaseClient.from('customer_devices').insert({
+      property_id: h.id, room,
+      product_id: document.getElementById('aProduct').value,
+      status: mapUiDeviceStatus(statusText, errorCodeValue),
+      error_code: errorCodeValue === 'normal' ? null : errorCodeValue,
+      last_cleaned: document.getElementById('aCleaned').value.trim() || null,
+      warranty_end: document.getElementById('aWarranty').value.trim() || null
+    });
+    if (error) { showToast('เพิ่มเครื่องไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    closeModal(); renderAllData(); renderCustomerAssets(customerId);
+    showToast('เพิ่มเครื่องปรับอากาศเรียบร้อยแล้วค่ะ');
+  };
+  window.openEditAirModal = function (customerId, hi, ai) {
+    const c = getCustomer(customerId);
+    const a = c && c.houses[hi] && c.houses[hi].airs[ai];
+    if (!a) return;
+    openModal(`<h3>แก้ไขเครื่องปรับอากาศ</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ห้อง', 'aRoom', a.room, 'text', 'required')}
+        ${selectField('รุ่นสินค้า', 'aProduct', PRODUCTS_DATA.map(p => p.id), a.product)}
+        ${selectField('สถานะ', 'aStatus', ['ปกติ', 'เสีย (ตามแจ้ง)'], a.status && a.status.startsWith('เสีย') ? 'เสีย (ตามแจ้ง)' : 'ปกติ')}
+        ${selectField('Error Code', 'aError', ['normal', 'E1', 'U4', 'F0'], a.errorCode || 'normal')}
+        ${field('ล้างล่าสุด', 'aCleaned', a.lastCleaned || '', 'text')}
+        ${field('ประกันสิ้นสุด', 'aWarranty', a.warrantyUntil || '', 'text')}
+      </div>
+      <p class="muted" style="margin-top:6px;">หมายเหตุ: ค่า Error Code จาก Blynk/Arduino จะถูกบันทึกจากอุปกรณ์จริงโดยอัตโนมัติ ช่องนี้ใช้สำหรับตั้งค่า/แก้ไขด้วยมือกรณีจำเป็นเท่านั้น</p>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveAirEdit('${esc(customerId)}',${hi},${ai})">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.saveAirEdit = async function (customerId, hi, ai) {
+    const c = getCustomer(customerId);
+    const a = c && c.houses[hi] && c.houses[hi].airs[ai];
+    if (!a) return;
+    const room = req('aRoom', 'ห้อง');
+    if (!room) return;
+    const statusText = document.getElementById('aStatus').value;
+    const errorCodeValue = document.getElementById('aError').value;
+    const { error } = await window._supabaseClient.from('customer_devices').update({
+      room,
+      product_id: document.getElementById('aProduct').value,
+      status: mapUiDeviceStatus(statusText, errorCodeValue),
+      error_code: errorCodeValue === 'normal' ? null : errorCodeValue,
+      last_cleaned: document.getElementById('aCleaned').value.trim() || null,
+      warranty_end: document.getElementById('aWarranty').value.trim() || null
+    }).eq('id', a.id);
+    if (error) { showToast('แก้ไขเครื่องไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    closeModal(); renderAllData(); renderCustomerAssets(customerId);
+    showToast('แก้ไขข้อมูลเครื่องเรียบร้อยแล้วค่ะ');
+  };
+  window.deleteAir = async function (customerId, hi, ai) {
+    const c = getCustomer(customerId);
+    const a = c && c.houses[hi] && c.houses[hi].airs[ai];
+    if (!a) return;
+    if (!confirm(`ลบเครื่องใน ${a.room} ใช่หรือไม่?`)) return;
+    const { error } = await window._supabaseClient.from('customer_devices').delete().eq('id', a.id);
+    if (error) { showToast('ลบเครื่องไม่สำเร็จ: ' + error.message); return; }
+    await loadStateFromSupabase();
+    renderAllData(); renderCustomerAssets(customerId);
+    showToast('ลบเครื่องปรับอากาศเรียบร้อยแล้วค่ะ');
+  };
+  window.viewAirDetails = function (customerId, houseIndex, airIndex) {
+    const c = getCustomer(customerId);
+    if (!c || !c.houses[houseIndex] || !c.houses[houseIndex].airs[airIndex]) return;
+    const h = c.houses[houseIndex], a = h.airs[airIndex];
+    const p = PRODUCTS_DATA.find(x => x.id === a.product);
+    const status = getAirStatusInfo(a);
+    openModal(`<h3>รายละเอียดเครื่องปรับอากาศ</h3>
+      <div class="list" style="margin-top:12px;">
+        <div class="row"><span>ลูกค้า</span><b>${esc(c.name)}</b></div>
+        <div class="row"><span>บ้าน</span><b>${esc(h.name)}</b></div>
+        <div class="row"><span>ห้อง</span><b>${esc(a.room)}</b></div>
+        <div class="row"><span>แบรนด์</span><b>${esc(p?.brand || 'ไม่ระบุ')}</b></div>
+        <div class="row"><span>รุ่น</span><b>${esc(p?.model || 'ไม่ระบุ')}</b></div>
+        <div class="row"><span>ขนาด</span><b>${p?.btu ? Number(p.btu).toLocaleString() + ' BTU' : 'ไม่ระบุ'}</b></div>
+        <div class="row"><span>ล้างล่าสุด</span><b>${esc(a.lastCleaned || '-')}</b></div>
+        <div class="row"><span>ประกันสิ้นสุด</span><b>${esc(a.warrantyUntil || '-')}</b></div>
+        <div class="row"><span>สถานะ</span><b class="tag ${status.tag}">${esc(status.label)}</b></div>
+        <div class="row"><span>รายละเอียดสถานะ</span><b>${esc(status.detail)}</b></div>
+      </div>
+      <button class="btn" style="margin-top:16px;width:100%;" onclick="closeModal()">ปิดหน้าต่าง</button>`);
+  };
+  window.renderCustomerAssets = function (id) {
+    const c = getCustomer(id);
+    if (!c) return;
+    currentCustomerId = id;
+    renderCustomerAssetTabs();
+    document.getElementById('assetMainTitle').textContent = `รายละเอียดเครื่องปรับอากาศ: ${c.name}`;
+    document.getElementById('assetSubTitle').textContent = `บ้าน ${customerHouseCount(c)} หลัง มีเครื่องปรับอากาศรวม ${customerAirCount(c)} เครื่อง (ข้อมูลของลูกค้าคนนี้เท่านั้น)`;
+    let globalIndex = 0;
+    const content = document.getElementById('assetContent');
+    if (!c.houses.length) {
+      content.innerHTML = `<div class="empty-state">ลูกค้ารายนี้ยังไม่มีบ้าน<br><button class="btn" style="margin-top:12px" onclick="openCreateHouseModal('${esc(c.id)}')">+ เพิ่มบ้าน</button></div>`;
+      return;
+    }
+    content.innerHTML = c.houses.map((h, houseIndex) => `
+      <div class="house-section">
+        <div class="house-section-title">
+          <span>🏠 ${esc(h.name)} — เครื่องปรับอากาศจำนวน ${h.airs.length} เครื่อง</span>
+          <span class="action-row">
+            <span class="tag">${esc(h.address)}</span>
+            <button class="btn secondary small" onclick="openEditHouseModal('${esc(c.id)}',${houseIndex})">แก้ไขบ้าน</button>
+            <button class="btn danger small" onclick="deleteHouse('${esc(c.id)}',${houseIndex})">ลบบ้าน</button>
+          </span>
+        </div>
+        <div class="action-row" style="margin-bottom:12px;">
+          <button class="btn small" onclick="openCreateAirModal('${esc(c.id)}',${houseIndex})">+ เพิ่มเครื่อง</button>
+        </div>
+        <div class="grid grid-3">
+          ${h.airs.map((a, airIndex) => {
+            const p = PRODUCTS_DATA.find(x => x.id === a.product);
+            const index = globalIndex++;
+            const status = getAirStatusInfo(a);
+            const bad = status.tag === 'red';
+            return `<div class="card" style="padding:14px;border-top:3px solid var(--${bad ? 'red' : 'green'});">
+              <div class="job-head" style="gap:8px;align-items:flex-start;">
+                <b>เครื่องที่ ${index + 1}: ${esc(a.room)}</b>
+                <span class="tag ${status.tag}">${esc(status.label)}</span>
+              </div>
+              <div style="display:grid;gap:7px;margin-top:12px;font-size:12px;">
+                <div class="row"><span>แบรนด์</span><b>${esc(p?.brand || 'ไม่ระบุ')}</b></div>
+                <div class="row"><span>รุ่น</span><b>${esc(p?.model || 'ไม่ระบุ')}</b></div>
+                <div class="row"><span>ขนาด</span><b>${p?.btu ? Number(p.btu).toLocaleString() + ' BTU' : 'ไม่ระบุ'}</b></div>
+              </div>
+              <div style="margin-top:10px;padding:9px 10px;border-radius:9px;background:${bad ? '#fff4f4' : '#f1fbf6'};font-size:12px;line-height:1.5;color:${bad ? 'var(--red)' : 'var(--muted)'};">
+                <b>${bad ? 'สถานะอุปกรณ์' : 'สถานะระบบ'}</b><br>${esc(status.detail)}
+              </div>
+              <div class="action-row" style="margin-top:10px;">
+                <button class="btn secondary small" onclick="viewAirDetails('${esc(c.id)}',${houseIndex},${airIndex})">ดูรายละเอียด</button>
+                <button class="btn outline small" onclick="openEditAirModal('${esc(c.id)}',${houseIndex},${airIndex})">แก้ไข</button>
+                <button class="btn danger small" onclick="deleteAir('${esc(c.id)}',${houseIndex},${airIndex})">ลบ</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`).join('') +
+      `<button class="btn" style="margin-top:4px" onclick="openCreateHouseModal('${esc(c.id)}')">+ เพิ่มบ้านให้ลูกค้า</button>`;
+  };
+
+  // -------------------- TEAMS / TECHNICIANS --------------------
+  window.addNewTeamModal = function () {
+    const member = (p, title) => `
+      <div class="card" style="padding:14px;margin-top:10px;border:1px solid var(--line);">
+        <b>${title}</b>
+        <div class="form-grid" style="margin-top:10px;">
+          ${field('ชื่อ', p + 'Name', '', 'text', 'required')}
+          ${field('อายุ', p + 'Age', '', 'number', 'min="1" required')}
+          ${field('เบอร์โทรศัพท์', p + 'Phone', '', 'tel', 'required')}
+          ${field('อีเมล (ใช้ล็อกอิน)', p + 'Email', '', 'email', 'required')}
+          ${field('ประสบการณ์', p + 'Exp', '', 'text', 'required')}
+          ${field('ความเชี่ยวชาญ', p + 'Expertise', '', 'text', 'required')}
+        </div>
+      </div>`;
+    openModal(`<h3>+ เพิ่มทีมช่างใหม่</h3>
+      <p class="muted">การสร้างทีมนี้จะสร้างบัญชีเข้าสู่ระบบจริงให้ช่างทั้ง 3 คนใช้ล็อกอินแอป 003 ด้วยรหัสผ่านเริ่มต้น ${esc(DEFAULT_NEW_ACCOUNT_PASSWORD)}</p>
+      <div style="margin-top:14px;">${field('ชื่อทีม', 'newTeamName', '', 'text', 'required')}</div>
+      ${member('leader', 'หัวหน้าทีม')}
+      ${member('assistant', 'ผู้ช่วยทีม')}
+      ${member('trainee', 'ช่างฝึกหัด')}
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveNewTeam()">สร้างทีม</button>
+      </div>`);
+  };
+  window.saveNewTeam = async function () {
+    const teamName = req('newTeamName', 'ชื่อทีม');
+    if (!teamName) return;
+    if (TECHNICIANS_DATA.some(t => String(t.team).trim().toLowerCase() === teamName.trim().toLowerCase())) {
+      showToast('ชื่อทีมนี้มีอยู่แล้วค่ะ'); return;
+    }
+    const roles = [['leader', 'หัวหน้าทีม'], ['assistant', 'ผู้ช่วยช่าง'], ['trainee', 'ช่างฝึกหัด']];
+    const people = [];
+    for (const [p, pos] of roles) {
+      const name = req(p + 'Name', 'ชื่อ' + pos);
+      const age = req(p + 'Age', 'อายุ' + pos);
+      const phone = req(p + 'Phone', 'เบอร์โทรศัพท์' + pos);
+      const email = req(p + 'Email', 'อีเมล' + pos);
+      const exp = req(p + 'Exp', 'ประสบการณ์' + pos);
+      const expertise = req(p + 'Expertise', 'ความเชี่ยวชาญ' + pos);
+      if (!name || !age || !phone || !email || !exp || !expertise) return;
+      people.push({
+        name: name.startsWith('ช่าง') ? name : 'ช่าง' + name,
+        age: Number(age), phone, email, experience: exp, expertise, position: pos
+      });
+    }
+    const teamId = await nextTeamId();
+    const { error: teamErr } = await window._supabaseClient.from('technician_teams').insert({ id: teamId, name: teamName });
+    if (teamErr) { showToast('สร้างทีมไม่สำเร็จ: ' + teamErr.message); return; }
+
+    for (const m of people) {
+      const techCode = await nextTechnicianCode();
+      const { data, error } = await window._supabaseClient.functions.invoke('admin-create-account', {
+        body: {
+          email: m.email, password: DEFAULT_NEW_ACCOUNT_PASSWORD, full_name: m.name, phone: m.phone,
+          role: 'technician',
+          technician: { team_id: teamId, position: m.position, technician_code: techCode, expertise: m.expertise }
+        }
+      });
+      if (error || data?.error) {
+        showToast(`สร้างบัญชี ${m.name} ไม่สำเร็จ: ${data?.error || error.message}`);
+        continue;
+      }
+      await window._supabaseClient.from('technicians').update({ age: m.age, experience_note: m.experience }).eq('id', data.id);
+    }
+    await loadStateFromSupabase(); closeModal(); renderAllData(); renderTeamManagement();
+    showToast(`สร้าง ${teamName} พร้อมข้อมูลช่างครบ 3 ตำแหน่งเรียบร้อยแล้วค่ะ`);
+  };
+  window.editTechProfile = function (id) {
+    const t = getTech(id);
+    if (!t) { showToast('ไม่พบข้อมูลช่างค่ะ'); return; }
+    openModal(`<h3>แก้ไขข้อมูล: ${esc(t.name)}</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อช่าง', 'editTechName', t.name, 'text', 'required')}
+        ${field('เบอร์โทรศัพท์', 'editTechPhone', t.phone || '', 'tel', 'required')}
+        ${field('อายุ', 'editTechAge', t.age || '', 'number', 'min="1" required')}
+        ${field('ทีม', 'editTechTeam', t.team || '', 'text', 'required')}
+        ${field('ตำแหน่ง', 'editTechPosition', t.position || '', 'text', 'required')}
+        ${field('ความเชี่ยวชาญ', 'editTechExpertise', t.expertise || '', 'text', 'required')}
+        ${field('ประสบการณ์', 'editTechExperience', t.experience || '', 'text', 'required')}
+      </div>
+      <p class="muted" style="margin-top:6px;">หมายเหตุ: สถานะปฏิบัติงาน/เวลาเข้า-ออก อ้างอิงจากการเช็คอินจริงของช่างในแอป 003 แก้ไขในหน้านี้ไม่ได้ค่ะ</p>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveTechProfile('${esc(id)}')">บันทึกแก้ไข</button>
+      </div>`);
+  };
+  window.saveTechProfile = async function (id) {
+    const t = getTech(id);
+    if (!t) return;
+    const name = req('editTechName', 'ชื่อช่าง');
+    const phone = req('editTechPhone', 'เบอร์โทรศัพท์');
+    const age = req('editTechAge', 'อายุ');
+    const teamName = req('editTechTeam', 'ทีม');
+    const position = req('editTechPosition', 'ตำแหน่ง');
+    const expertise = req('editTechExpertise', 'ความเชี่ยวชาญ');
+    const experience = req('editTechExperience', 'ประสบการณ์');
+    if (!name || !phone || !age || !teamName || !position || !expertise || !experience) return;
+
+    const teamId = await resolveOrCreateTeamId(teamName);
+    const { error: profErr } = await window._supabaseClient.from('profiles').update({ full_name: name, phone }).eq('id', id);
+    const { error: techErr } = await window._supabaseClient.from('technicians').update({
+      age: Number(age), team_id: teamId, position, expertise, experience_note: experience
+    }).eq('id', id);
+    if (profErr || techErr) { showToast('แก้ไขข้อมูลช่างไม่สำเร็จ'); console.error(profErr||techErr); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast('แก้ไขข้อมูลช่างเรียบร้อยแล้วค่ะ');
+  };
+  window.viewTechDetails = function (id) {
+    const t = getTech(id);
+    if (!t) return;
+    openModal(`<h3>${esc(t.name)}</h3>
+      <div class="list" style="margin-top:12px;">
+        <div class="row"><span>ทีม</span><b>${esc(t.team)}</b></div>
+        <div class="row"><span>ตำแหน่ง</span><b>${esc(t.position)}</b></div>
+        <div class="row"><span>โทร</span><b>${esc(t.phone)}</b></div>
+        <div class="row"><span>อายุ</span><b>${t.age ? t.age + ' ปี' : '-'}</b></div>
+        <div class="row"><span>ความเชี่ยวชาญ</span><b>${esc(t.expertise)}</b></div>
+        <div class="row"><span>ประสบการณ์</span><b>${esc(t.experience)}</b></div>
+        <div class="row"><span>เวลาเข้า - ออกวันนี้</span><b>${esc(t.clockIn || '-')} - ${esc(t.clockOut || '-')}</b></div>
+        <div class="row"><span>แต้มสะสม (จากรีวิว/ตรงเวลาจริง)</span><b>${Number(t.points || 0).toLocaleString()} แต้ม</b></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" onclick="editTechProfile('${esc(id)}')">แก้ไข</button>
+        <button class="btn outline" onclick="closeModal()">ปิด</button>
+      </div>`);
+  };
+  window.deleteTech = async function (id) {
+    const t = getTech(id);
+    if (!t) { showToast('ไม่พบข้อมูลช่างค่ะ'); return; }
+    if (!confirm(`ต้องการลบ ${t.name} (${t.position}) ออกจากระบบใช่หรือไม่? งานที่เคยมอบหมายจะยังคงอยู่แต่จะไม่มีช่างรับผิดชอบ`)) return;
+    // deletes the profile (and technicians row, via cascade) — see the 0004
+    // patch. Un-assigns (does not delete) any jobs this technician had.
+    // Does NOT remove the underlying Auth login — same caveat as deleteCustomer.
+    const { error } = await window._supabaseClient.from('profiles').delete().eq('id', id);
+    if (error) { showToast('ลบไม่สำเร็จ: ' + error.message); console.error(error); return; }
+    await loadStateFromSupabase(); closeModal(); renderAllData();
+    showToast(`ลบ ${t.name} เรียบร้อยแล้วค่ะ`);
+  };
+  window.openTechBonusExchange = function (id) {
+    const t = getTech(id);
+    if (!t) return;
+    const options = BONUS_LIST.map(b => `<option value="${b.id}">${esc(b.title)} (ใช้ ${b.pts} แต้ม)</option>`).join('');
+    openModal(`<h3>แลกโบนัสสวัสดิการ: ${esc(t.name)}</h3>
+      <div class="list" style="margin-top:12px;">
+        <div class="row"><span>ช่าง</span><b>${esc(t.name)}</b></div>
+        <div class="row"><span>แต้มปัจจุบัน</span><b>${Number(t.points || 0).toLocaleString()} แต้ม</b></div>
+      </div>
+      <div style="display:grid;gap:10px;margin-top:14px;">
+        <label class="form-field">เลือกรายการโบนัส<select id="selectedBonusId">${options}</select></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn" onclick="confirmTechBonus('${esc(id)}')">ยืนยันแลกโบนัส</button>
+      </div>`);
+  };
+  window.confirmTechBonus = function (id) {
+    const t = getTech(id);
+    if (!t) return;
+    const item = BONUS_LIST.find(b => String(b.id) === document.getElementById('selectedBonusId').value);
+    if (!item) return;
+    if ((t.points || 0) < item.pts) {
+      closeModal(); showToast(`แต้มของ ${t.name} ไม่เพียงพอค่ะ`); return;
+    }
+    t.points = (t.points || 0) - item.pts;
+    persist(); closeModal(); renderTeamManagement();
+    showToast(`${t.name} แลก ${item.title} สำเร็จ หัก ${item.pts.toLocaleString()} แต้มค่ะ`);
+  };
+  window.openTechChatFromTeam = function (id) {
+    currentTechId = id;
+    navigateToPage('technician-chat');
+    selectTechChat(id);
+  };
+  window.renderTeamManagement = function () {
+    const box = document.getElementById('teamManagementContainer');
+    if (!box) return;
+    const teams = [...new Set(TECHNICIANS_DATA.map(t => t.team))];
+    box.innerHTML = teams.length ? teams.map(team => {
+      const members = TECHNICIANS_DATA.filter(t => t.team === team);
+      return `<div class="team-section-header">${esc(team)} (ช่าง ${members.length} คน)</div>
+        <div class="team-grid">
+          ${members.map(t => `
+            <div class="team-card">
+              <div class="team-avatar">${esc(t.name.replace('ช่าง', '').slice(0, 2))}</div>
+              <b style="font-size:16px;">${esc(t.name)} (${esc(t.position)})</b>
+              <div class="muted" style="font-size:12px;margin-top:4px;">อายุ ${t.age || '-'} | ${esc(t.phone)}</div>
+              <div style="font-size:12px;margin-top:6px;color:var(--muted);">${esc(t.expertise)}</div>
+              <div style="font-size:12px;margin-top:6px;">วันนี้: <b>${esc(t.clockIn || '-')}</b> - <b>${esc(t.clockOut || '-')}</b></div>
+              <div style="margin-top:8px;"><span class="tag ${t.status === 'หยุดงาน' ? 'gray' : 'green'}">${esc(t.status)}</span></div>
+              <div class="team-card-btns">
+                <button class="btn secondary small" onclick="editTechProfile('${esc(t.id)}')">แก้ไข</button>
+                <button class="btn outline small" onclick="viewTechDetails('${esc(t.id)}')">ดูรายละเอียด</button>
+                <button class="btn outline small" onclick="openTechChatFromTeam('${esc(t.id)}')">เปิดแชท</button>
+                <button class="btn danger small" onclick="deleteTech('${esc(t.id)}')">ลบ</button>
+              </div>
+            </div>`).join('')}
+        </div>`;
+    }).join('') : '<div class="empty-state">ยังไม่มีทีมช่างค่ะ</div>';
+  };
+
+  // -------------------- CUSTOMER CHAT --------------------
+  // -------------------- CUSTOMER CHAT (real chat_conversations/chat_messages) --------------------
+  let CUSTOMER_CONV_MAP = {};   // customerId -> conversation_id
+  let TECH_CONV_MAP = {};       // technicianId -> conversation_id
+  let _chatChannels = {};       // dedupe realtime subscriptions
+
+  async function ensureAdminConversation(type, participantId){
+    const map = type === 'customer_admin' ? CUSTOMER_CONV_MAP : TECH_CONV_MAP;
+    if (map[participantId]) return map[participantId];
+    const filterCol = type === 'customer_admin' ? 'customer_id' : 'technician_id';
+    let { data, error: selErr } = await window._supabaseClient.from('chat_conversations').select('id')
+      .eq(filterCol, participantId).eq('type', type).maybeSingle();
+    if (selErr) console.error('ensureAdminConversation select error:', selErr);
+    if (!data) {
+      const ins = await window._supabaseClient.from('chat_conversations')
+        .insert({ type, [filterCol]: participantId }).select('id').single();
+      if (ins.error) {
+        // most likely cause: a concurrent call already created this conversation
+        // (there's a unique index per participant+type) — self-heal by
+        // re-querying instead of leaving this conversation permanently unreachable
+        console.error('ensureAdminConversation insert error:', ins.error.code, ins.error.message, ins.error.details, ins.error.hint);
+        const retry = await window._supabaseClient.from('chat_conversations').select('id')
+          .eq(filterCol, participantId).eq('type', type).maybeSingle();
+        if (retry.error || !retry.data) {
+          console.error('ensureAdminConversation retry failed:', retry.error);
+          return null;
+        }
+        data = retry.data;
+      } else {
+        data = ins.data;
+      }
+    }
+    map[participantId] = data.id;
+    return data.id;
+  }
+  async function sendAdminMessageToCustomer(customerId, text){
+    const convId = await ensureAdminConversation('customer_admin', customerId);
+    if (!convId) { showToast('ไม่พบห้องแชท'); return false; }
+    const { error } = await window._supabaseClient.from('chat_messages').insert({
+      conversation_id: convId, sender_role: 'admin', sender_id: CURRENT_ADMIN_USER.id, body: text
+    });
+    if (error) {
+      console.error('sendAdminMessageToCustomer insert error:', error.code, error.message, error.details, error.hint);
+      showToast('ส่งข้อความไม่สำเร็จ: ' + error.message);
+      return false;
+    }
+    return true;
+  }
+  function subscribeCustomerChat(customerId, convId){
+    if (_chatChannels['c_'+customerId]) return;
+    _chatChannels['c_'+customerId] = window._supabaseClient.channel('admin-cchat-'+convId)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages',
+          filter:`conversation_id=eq.${convId}` }, payload => {
+        const m = payload.new;
+        CUSTOMER_CHATS[customerId] = CUSTOMER_CHATS[customerId] || [];
+        CUSTOMER_CHATS[customerId].push([m.sender_role === 'admin' ? 'admin' : 'customer', m.body]);
+        if (currentCustomerId === customerId) renderCustomerChatMessages();
+        renderCustomerChatList();
+      }).subscribe();
+  }
+  async function loadCustomerChatMessages(customerId){
+    const convId = await ensureAdminConversation('customer_admin', customerId);
+    if (!convId) return;
+    const { data } = await window._supabaseClient.from('chat_messages').select('*')
+      .eq('conversation_id', convId).order('created_at');
+    CUSTOMER_CHATS[customerId] = (data||[]).map(m => [m.sender_role === 'admin' ? 'admin' : 'customer', m.body]);
+    renderCustomerChatMessages();
+    subscribeCustomerChat(customerId, convId);
+  }
+  window.renderCustomerChatList = function () {
+    const box = document.getElementById('customerUserList');
+    if (!box) return;
+    const ordered = [...CUSTOMERS_DATA].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+    box.innerHTML = ordered.map(c => `
+      <div class="user-item ${c.id === currentCustomerId ? 'active' : ''}" onclick="selectCustomerChat('${esc(c.id)}')">
+        <div class="user-item-head">
+          <b>${esc(c.name)}</b>
+          <span style="display:flex;gap:4px;align-items:center;">
+            <span class="tag ${tagClass(c.queue)}">${c.statusType === 'HAS_QUEUE' ? 'มีคิว' : 'ปกติ'}</span>
+            ${c.pinned ? '<span title="ปักหมุด">📌</span>' : ''}
+          </span>
+        </div>
+        <div class="muted" style="font-size:11px;">${esc(c.queue)}</div>
+      </div>`).join('');
+  };
+  window.selectCustomerChat = async function (id) {
+    currentCustomerId = id;
+    renderCustomerChatList();
+    const c = getCustomer(id);
+    if (!c) return;
+    document.getElementById('activeCustomerTitle').textContent = `ห้องสนทนา: ${c.name}`;
+    document.getElementById('pinCustomerBtn').textContent = c.pinned ? '📌 ยกเลิกปักหมุด' : '📌 ปักหมุดแชท';
+    await loadCustomerChatMessages(id);
+  };
+  window.renderCustomerChatMessages = function () {
+    const box = document.getElementById('custChatBox');
+    const msgs = CUSTOMER_CHATS[currentCustomerId] || [];
+    box.innerHTML = msgs.map(m => `<div class="chat-msg ${m[0] === 'admin' ? 'me' : 'other'}">${esc(m[1])}</div>`).join('');
+    box.scrollTop = box.scrollHeight;
+  };
+  window.sendCustMsg = async function () {
+    const input = document.getElementById('custChatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const ok = await sendAdminMessageToCustomer(currentCustomerId, text);
+    if (!ok) return; // error toast already shown inside sendAdminMessageToCustomer; keep the typed text
+    input.value = '';
+    showToast(`ส่งข้อความถึง ${getCustomer(currentCustomerId)?.name || 'ลูกค้า'} แล้วค่ะ`);
+    // the realtime subscription above renders the bubble once the insert lands
+  };
+  window.toggleCustomerPin = function () {
+    // NOTE: "pinned" is a local/demo-only convenience — there is no equivalent
+    // column in the shared schema yet, so it does not sync across sessions.
+    const c = getCustomer(currentCustomerId);
+    if (!c) return;
+    c.pinned = !c.pinned;
+    persist();
+    renderCustomerChatList();
+    document.getElementById('pinCustomerBtn').textContent = c.pinned ? '📌 ยกเลิกปักหมุด' : '📌 ปักหมุดแชท';
+    showToast(c.pinned ? 'ปักหมุดแชทแล้วค่ะ' : 'ยกเลิกปักหมุดแชทแล้วค่ะ');
+  };
+  window.sendPaymentInfoToChat = async function () {
+    const ok = await sendAdminMessageToCustomer(currentCustomerId,
+      `ข้อมูลโอนเงินค่ะ\n${STORE.bank}: ${STORE.accountNo}\nชื่อบัญชี: ${STORE.accountName}`);
+    if (ok) showToast('ส่งข้อมูลบัญชีชำระเงินเรียบร้อยแล้วค่ะ');
+  };
+  window.sendPhoneInfoToChat = async function () {
+    const ok = await sendAdminMessageToCustomer(currentCustomerId, `เบอร์ติดต่อสำนักงาน ${STORE.name}: ${STORE.phone} ค่ะ`);
+    if (ok) showToast('ส่งเบอร์สำนักงานเรียบร้อยแล้วค่ะ');
+  };
+
+  // -------------------- TECH CHAT (real chat_conversations/chat_messages) --------------------
+  function subscribeTechChatAdmin(techId, convId){
+    if (_chatChannels['t_'+techId]) return;
+    _chatChannels['t_'+techId] = window._supabaseClient.channel('admin-tchat-'+convId)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages',
+          filter:`conversation_id=eq.${convId}` }, payload => {
+        const m = payload.new;
+        const t = getTech(techId);
+        if (t) { t.chat = t.chat || []; t.chat.push({ id: m.id, role: m.sender_role === 'admin' ? 'admin' : 'tech', body: m.body, pinned: !!m.is_pinned }); }
+        if (currentTechId === techId) renderTechMessages();
+        renderTechChatList();
+      }).subscribe();
+  }
+  async function loadTechChatMessages(techId){
+    const convId = await ensureAdminConversation('technician_admin', techId);
+    if (!convId) return;
+    const { data } = await window._supabaseClient.from('chat_messages').select('*')
+      .eq('conversation_id', convId).order('created_at');
+    const t = getTech(techId);
+    if (t) t.chat = (data||[]).map(m => ({ id: m.id, role: m.sender_role === 'admin' ? 'admin' : 'tech', body: m.body, pinned: !!m.is_pinned }));
+    renderTechMessages();
+    subscribeTechChatAdmin(techId, convId);
+  }
+  window.renderTechChatList = function () {
+    const box = document.getElementById('techUserList');
+    if (!box) return;
+    box.innerHTML = TECHNICIANS_DATA.map(t => `
+      <div class="user-item ${t.id === currentTechId ? 'active' : ''}" onclick="selectTechChat('${esc(t.id)}')">
+        <div class="user-item-head">
+          <b>${esc(t.name)}</b>
+          <span class="tag">${esc(t.team)}</span>
+        </div>
+        <div class="muted" style="font-size:11px;">${esc((t.chat && t.chat[t.chat.length - 1]?.body) || 'ยังไม่มีข้อความ')}</div>
+      </div>`).join('');
+  };
+  window.selectTechChat = async function (id) {
+    currentTechId = id;
+    const t = getTech(id);
+    if (!t) return;
+    renderTechChatList();
+    document.getElementById('activeTechTitle').textContent = `สนทนากับ: ${t.name} (${t.team})`;
+    await loadTechChatMessages(id);
+  };
+  window.renderTechMessages = function () {
+    const box = document.getElementById('techChatBox');
+    const t = getTech(currentTechId);
+    if (!t) return;
+    box.innerHTML = (t.chat||[]).map(m => `
+      <div class="chat-msg ${m.role === 'admin' ? 'me' : 'other'} ${m.pinned ? 'pinned' : ''}" style="position:relative;${m.pinned ? 'border:1px solid gold;' : ''}">
+        ${m.pinned ? '<span title="ปักหมุดแล้ว" style="margin-right:4px;">📌</span>' : ''}${esc(m.body)}
+        <button class="btn-tiny" style="margin-left:8px;font-size:11px;opacity:0.7;" onclick="togglePinTechMessage('${m.id}')">${m.pinned ? 'เลิกปักหมุด' : 'ปักหมุด'}</button>
+      </div>`).join('');
+    box.scrollTop = box.scrollHeight;
+  };
+  window.togglePinTechMessage = async function (messageId) {
+    const t = getTech(currentTechId);
+    const msg = t && (t.chat||[]).find(m => m.id === messageId);
+    if (!msg) return;
+    const newPinned = !msg.pinned;
+    const { error } = await window._supabaseClient.from('chat_messages')
+      .update({ is_pinned: newPinned }).eq('id', messageId);
+    if (error) {
+      console.error('togglePinTechMessage error:', error.code, error.message, error.details, error.hint);
+      showToast('ปักหมุดไม่สำเร็จ: ' + error.message);
+      return;
+    }
+    msg.pinned = newPinned; // reflect the confirmed database state locally
+    renderTechMessages();
+    showToast(newPinned ? 'ปักหมุดข้อความแล้วค่ะ' : 'เลิกปักหมุดข้อความแล้วค่ะ');
+  };
+  window.sendTechMsg = async function () {
+    const input = document.getElementById('techChatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const convId = await ensureAdminConversation('technician_admin', currentTechId);
+    if (!convId) { showToast('ไม่พบห้องแชท'); return; }
+    const { error } = await window._supabaseClient.from('chat_messages').insert({
+      conversation_id: convId, sender_role: 'admin', sender_id: CURRENT_ADMIN_USER.id, body: text
+    });
+    if (error) {
+      console.error('sendTechMsg insert error:', error.code, error.message, error.details, error.hint);
+      showToast('ส่งข้อความไม่สำเร็จ: ' + error.message);
+      return; // keep the typed text so it can be retried
+    }
+    input.value = '';
+    // the realtime subscription above renders the bubble once the insert lands
+    showToast(`ส่งข้อความถึง ${getTech(currentTechId)?.name || 'ช่าง'} แล้วค่ะ`);
+  };
+
+  // -------------------- SETTINGS / PROFILE --------------------
+  window.renderSettings = function () {
+    const sec = document.getElementById('settings');
+    if (!sec) return;
+    sec.innerHTML = `
+      <div class="section-title"><h2>ตั้งค่าข้อมูลร้าน & ช่องทางการติดต่อ (Store Settings)</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <h3 style="margin:0;">ข้อมูลร้าน</h3>
+            <button class="btn secondary" style="font-size:11px;" onclick="openStoreSettingsModal()">แก้ไขข้อมูลร้าน</button>
+          </div>
+          <div class="list" style="margin-top:12px;">
+            <div class="row"><span>ชื่อร้าน</span><b>${esc(STORE.name)}</b></div>
+            <div class="row"><span>เบอร์โทรศัพท์</span><b>${esc(STORE.phone)}</b></div>
+            <div class="row"><span>ที่อยู่</span><b>${esc(STORE.address)}</b></div>
+            <div class="row"><span>เวลาเปิด–ปิด</span><b>${esc(STORE.hours)}</b></div>
+            <div class="row"><span>LINE OA</span><b>${esc(STORE.line)}</b></div>
+            <div class="row"><span>Facebook</span><b>${esc(STORE.facebook)}</b></div>
+            <div class="row"><span>Instagram</span><b>${esc(STORE.instagram)}</b></div>
+            <div class="row"><span>TikTok</span><b>${esc(STORE.tiktok)}</b></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <h3 style="margin:0;">ข้อมูลบัญชีธนาคาร</h3>
+            <button class="btn secondary" style="font-size:11px;" onclick="openBankSettingsModal()">แก้ไขข้อมูลบัญชี</button>
+          </div>
+          <div class="list" style="margin-top:12px;">
+            <div class="row"><span>ธนาคาร</span><b>${esc(STORE.bank)}</b></div>
+            <div class="row"><span>ชื่อบัญชี</span><b>${esc(STORE.accountName)}</b></div>
+            <div class="row"><span>เลขบัญชี</span><b>${esc(STORE.accountNo)}</b></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>ตั้งค่าการแจ้งเตือน</h3>
+          <div class="list">
+            <div class="row"><span>การเชื่อมต่อ Blynk IoT</span><span class="tag green">เชื่อมต่อแล้ว</span></div>
+            <div class="row"><span>การเชื่อมต่อ LINE Notification</span><span class="tag green">เชื่อมต่อแล้ว</span></div>
+            <div class="row"><span>สถานะการแจ้งเตือนงาน</span><span class="tag green">เปิดใช้งาน</span></div>
+            <div class="row"><span>เวอร์ชันระบบ</span><b>Lumina Admin v06</b></div>
+          </div>
+        </div>
+      </div>`;
+  };
+  window.openStoreSettingsModal = function () {
+    openModal(`<h3>แก้ไขข้อมูลร้าน</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อร้าน', 'sName', STORE.name, 'text', 'required')}
+        ${field('เบอร์โทรศัพท์', 'sPhone', STORE.phone, 'tel', 'required')}
+        ${field('ที่อยู่', 'sAddress', STORE.address, 'text', 'required')}
+        ${field('เวลาเปิด–ปิด', 'sHours', STORE.hours, 'text', 'required')}
+        ${field('LINE OA', 'sLine', STORE.line, 'text', 'required')}
+        ${field('Facebook', 'sFacebook', STORE.facebook, 'text', 'required')}
+        ${field('Instagram', 'sInstagram', STORE.instagram, 'text', 'required')}
+        ${field('TikTok', 'sTiktok', STORE.tiktok, 'text', 'required')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveStoreSettings()">บันทึกข้อมูลร้าน</button>
+      </div>`);
+  };
+  window.saveStoreSettings = function () {
+    const keys = [
+      ['sName', 'name', 'ชื่อร้าน'], ['sPhone', 'phone', 'เบอร์โทรศัพท์'],
+      ['sAddress', 'address', 'ที่อยู่'], ['sHours', 'hours', 'เวลาเปิด–ปิด'],
+      ['sLine', 'line', 'LINE OA'], ['sFacebook', 'facebook', 'Facebook'],
+      ['sInstagram', 'instagram', 'Instagram'], ['sTiktok', 'tiktok', 'TikTok']
+    ];
+    for (const [id, key, label] of keys) {
+      const v = req(id, label); if (!v) return; STORE[key] = v;
+    }
+    persist(); closeModal(); renderSettings();
+    showToast('บันทึกข้อมูลร้านเรียบร้อยแล้วค่ะ');
+  };
+  window.openBankSettingsModal = function () {
+    openModal(`<h3>แก้ไขข้อมูลบัญชีธนาคาร</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ธนาคาร', 'bankName', STORE.bank, 'text', 'required')}
+        ${field('ชื่อบัญชี', 'bankAccountName', STORE.accountName, 'text', 'required')}
+        ${field('เลขบัญชี', 'bankAccountNo', STORE.accountNo, 'text', 'required')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveBankSettings()">บันทึกข้อมูลบัญชี</button>
+      </div>`);
+  };
+  window.saveBankSettings = function () {
+    const bank = req('bankName', 'ธนาคาร');
+    const name = req('bankAccountName', 'ชื่อบัญชี');
+    const no = req('bankAccountNo', 'เลขบัญชี');
+    if (!bank || !name || !no) return;
+    STORE.bank = bank; STORE.accountName = name; STORE.accountNo = no;
+    persist(); closeModal(); renderSettings();
+    showToast('บันทึกข้อมูลบัญชีเรียบร้อยแล้วค่ะ');
+  };
+  window.openAdminProfileModal = function () {
+    openModal(`<h3>แก้ไขโปรไฟล์แอดมิน</h3>
+      <div class="form-grid" style="margin-top:14px;">
+        ${field('ชื่อ-นามสกุล', 'aName', PROFILE.name, 'text', 'required')}
+        ${field('ตำแหน่ง', 'aPosition', PROFILE.position, 'text', 'required')}
+        ${field('เบอร์โทรศัพท์', 'aPhone', PROFILE.phone, 'tel', 'required')}
+        ${field('อีเมล', 'aEmail', PROFILE.email, 'email', 'required')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn success" onclick="saveAdminProfile()">บันทึก</button>
+      </div>`);
+  };
+  window.saveAdminProfile = function () {
+    const n = req('aName', 'ชื่อ-นามสกุล');
+    const pos = req('aPosition', 'ตำแหน่ง');
+    const ph = req('aPhone', 'เบอร์โทรศัพท์');
+    const em = req('aEmail', 'อีเมล');
+    if (!n || !pos || !ph || !em) return;
+    PROFILE.name = n; PROFILE.position = pos; PROFILE.phone = ph; PROFILE.email = em;
+    const rows = document.querySelectorAll('#profile .card:first-of-type .list .row b');
+    if (rows[0]) rows[0].textContent = n;
+    if (rows[1]) rows[1].textContent = pos;
+    if (rows[2]) rows[2].textContent = ph;
+    if (rows[3]) rows[3].textContent = em;
+    const greet = document.querySelector('.greeting h1');
+    if (greet) greet.textContent = `สวัสดี ${n} (${pos})`;
+    persist(); closeModal();
+    showToast('บันทึกโปรไฟล์แอดมินเรียบร้อยแล้วค่ะ');
+  };
+  window.setWorkStatus = function (status) {
+    isWorking = status;
+    const badge = document.getElementById('topStatusBadge');
+    const text = document.getElementById('topStatusText');
+    badge.className = 'top-status-badge ' + (status ? 'on' : 'off');
+    text.textContent = status ? 'กำลังปฏิบัติงาน' : 'นอกเวลาปฏิบัติงาน';
+    persist();
+    showToast(status ? 'บันทึกเวลาเข้าปฏิบัติงานเรียบร้อยแล้วค่ะ' : 'บันทึกเวลาเลิกปฏิบัติงานเรียบร้อยแล้วค่ะ');
+  };
+
+  // -------------------- MASTER RENDER --------------------
+  function renderAllData() {
+    renderHomeStats();
+    renderPromos();
+    renderProducts(PRODUCTS_DATA);
+    renderBookings();
+    renderPendingJobs();
+    renderAssignedJobs();
+    renderErrors();
+    renderCustomers();
+    renderCustomerAssetTabs();
+    renderCustomerAssets(currentCustomerId);
+    renderCustomerChatList();
+    renderTeamManagement();
+    renderTechChatList();
+    renderSettings();
+  }
+
+  // -------------------- INIT --------------------
+  document.addEventListener('DOMContentLoaded', function () {
+    // remove old version label (keep the admin-name span + logout button added for real auth)
+    document.querySelectorAll('.brand small').forEach(e => e.remove());
+
+    document.getElementById('currentDate').textContent =
+      new Intl.DateTimeFormat('th-TH', { dateStyle: 'full' }).format(new Date());
+
+    document.querySelectorAll('.nav button').forEach(btn =>
+      btn.addEventListener('click', () => navigateToPage(btn.dataset.page)));
+
+    // modal close on backdrop / Esc
+    const modal = document.getElementById('modal');
+    if (modal) {
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal && modal.classList.contains('show')) closeModal();
+    });
+
+    // expose closeModal globally
+    window.closeModal = closeModal;
+    window.navigateToPage = navigateToPage;
+
+    // NOTE: data loading (loadStateFromSupabase + renderAllData) now happens
+    // in boot(), called only after a real admin login succeeds — see
+    // adminLogin() / checkExistingAdminSession() near the top of this file.
+  });
+
+  // exposed so boot() (defined earlier in this file, before login) can finish
+  // the render pass that used to run unconditionally at DOMContentLoaded
+  window._finishBootRender = function(){
+    const rows = document.querySelectorAll('#profile .card:first-of-type .list .row b');
+    if (rows[0]) rows[0].textContent = PROFILE.name;
+    if (rows[1]) rows[1].textContent = PROFILE.position;
+    if (rows[2]) rows[2].textContent = PROFILE.phone;
+    if (rows[3]) rows[3].textContent = PROFILE.email;
+    const greet = document.querySelector('.greeting h1');
+    if (greet) greet.textContent = `สวัสดี ${PROFILE.name} (${PROFILE.position})`;
+    if (isWorking) setWorkStatus(true);
+    renderAllData();
+    if (CUSTOMERS_DATA[0]) { currentCustomerId = CUSTOMERS_DATA[0].id; selectCustomerChat(currentCustomerId); }
+    if (TECHNICIANS_DATA[0]) { currentTechId = TECHNICIANS_DATA[0].id; selectTechChat(currentTechId); }
+  };
+})();
+</script>
+
+</body>
+</html>
